@@ -1,0 +1,18 @@
+include mixins
+doctype html
+html(lang='en')
+  head
+    title IFTTT
+    meta(charset='utf-8')
+    meta(
+      name='viewport',
+      content='width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes'
+    )
+    meta(name='description', content='')
+    link(rel='icon', sizes='16x16', href='/images/favicon.ico')
+    link(rel='stylesheet', href='/stylesheets/styles.min.css')
+  body
+    main.main
+      block content
+    include ./partials/flashes
+    script(src='/javascripts/index.min.js')
