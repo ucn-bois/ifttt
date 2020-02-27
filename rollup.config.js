@@ -5,7 +5,7 @@ import babel from 'rollup-plugin-babel';
 import { terser } from 'rollup-plugin-terser';
 
 const config = {
-  input: path.join(__dirname, 'public/javascripts/home.js'),
+  input: path.join(__dirname, 'public/javascripts/index.js'),
   output: {
     file: path.join(__dirname, 'public/javascripts/index.min.js'),
     format: 'iife',
