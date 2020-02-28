@@ -14,15 +14,12 @@ const redis = require('redis');
 const session = require('express-session');
 const RedisStore = require('connect-redis')(session);
 
-const {
-  deserializeUser,
-  serializeUser,
-  PassportLocalStrategy
-} = require('./src/repositories/auth');
+const { PassportLocalStrategy } = require('./src/repositories/auth');
+const { deserializeUser, serializeUser } = require('./src/repositories/users');
 
 passport.use(PassportLocalStrategy);
-passport.serializeUser(serializeUser);
 passport.deserializeUser(deserializeUser);
+passport.serializeUser(serializeUser);
 
 const app = express();
 const redisClient = redis.createClient();
@@ -59,16 +56,14 @@ app.use(require('./src/routes/auth'));
 
 // 404 Handler
 app.use((req, res, next) => {
-  next(createError(404));
+  next(createError(404, 'Page does not exist.'));
 });
 
 // Error handler
 app.use((err, req, res, next) => {
-  res.status(err.status || 500);
-  res.render('error', {
-    error: process.env.NODE_ENV === 'development' ? err : {},
-    message: err.message
-  });
+  console.log(err);
+  res.status(err.status);
+  res.render('error', { message: err.message });
 });
 
 module.exports = app;
