@@ -30,6 +30,7 @@ const login = async (username, plain) => {
   return user;
 };
 
+// @TODO: Should be executed as SQL transaction not as 2 separate operations.
 const resetUserPassword = async (token, password, repeatedPassword) => {
   if (password !== repeatedPassword) {
     throw createError(400, 'Passwords do not match.');

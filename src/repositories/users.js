@@ -1,7 +1,6 @@
 const createError = require('http-errors');
 
 const { db } = require('../clients');
-const authRepository = require('./auth');
 
 const changeUserPassword = async (id, password) => {
   await db('users')

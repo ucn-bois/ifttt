@@ -53,6 +53,7 @@ app.use(require('./src/middlewares/base'));
 // Routes
 app.use(require('./src/routes/home'));
 app.use(require('./src/routes/auth'));
+app.use(require('./src/routes/applets'));
 
 // 404 Handler
 app.use((req, res, next) => {

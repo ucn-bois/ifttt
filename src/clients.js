@@ -1,3 +1,5 @@
+const sg = require('@sendgrid/mail');
+
 const db = require('knex')({
   client: 'mysql',
   connection: {
@@ -8,6 +10,9 @@ const db = require('knex')({
   }
 });
 
+sg.setApiKey(process.env.SG_API_KEY);
+
 module.exports = {
-  db
+  db,
+  sg
 };

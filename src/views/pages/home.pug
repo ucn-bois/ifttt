@@ -3,3 +3,24 @@ extends ../base
 block content
   p Welcome #{user.username}. This is homepage.
   a(href='/sign-out') Log out
+  h1 Applets
+  each applet in applets
+    div
+      p
+        b Name: #{applet.name}
+      p Description: #{applet.description}
+      if applet.token
+        form(action=`/applets/${applet.id}/unsubscribe`, method='POST')
+          input(type='hidden', name='_csrf', value=csrfToken)
+          button(type='submit') Unsubscribe
+        form(action=`/applets/run/${applet.token}`, method='POST')
+          input(type='hidden', name='_csrf', value=csrfToken)
+          button(type='submit') Manual trigger
+      else
+        form(action=`/applets/${applet.id}/subscribe`, method='POST')
+          input(type='hidden', name='_csrf', value=csrfToken)
+          label(for='location') Location
+          input#location(type='text', name='location', required)
+          button(type='submit') Subscribe
+  else
+    div No applets :(
