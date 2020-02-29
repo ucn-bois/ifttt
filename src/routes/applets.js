@@ -9,12 +9,14 @@ router.post(
   async (req, res, next) => {
     try {
       const { id } = req.params;
-      const { id: userId } = req.user;
-      const { _csrf, ...config } = req.body;
+      const { id: userId, password } = req.user;
+      const { _csrf, expression, ...config } = req.body;
       await appletsRepository.subscribeUserToApplet(
         userId,
         id,
-        JSON.stringify(config)
+        JSON.stringify(config),
+        expression,
+        password
       );
       req.flash('success', 'You just got subscribed');
       res.redirect('/');
@@ -31,24 +33,8 @@ router.post(
     try {
       const { id } = req.params;
       const { id: userId } = req.user;
-      await appletsRepository.unsubscribeUserFromApplet(userId, id);
+      await appletsRepository.unsubscribeUserFromApplet(id, userId);
       req.flash('success', 'You just got unsubscribed');
-      res.redirect('/');
-    } catch (err) {
-      next(err);
-    }
-  }
-);
-
-router.post(
-  '/applets/run/:token',
-  signInRequired('/sign-in'),
-  async (req, res, next) => {
-    try {
-      const { token } = req.params;
-      const { email } = req.user;
-      await appletsRepository.runAppletWithToken(token, email);
-      req.flash('success', 'Applet was run manually.');
       res.redirect('/');
     } catch (err) {
       next(err);

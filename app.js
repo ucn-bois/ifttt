@@ -31,7 +31,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(csrf({ cookie: true }));
 app.use(flash());
 app.use(helmet());
 app.use(logger('dev'));
@@ -46,6 +45,12 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
+
+// API
+app.use('/api', require('./src/routes/api/applets'));
+
+// Enforce CSRF protection
+app.use(csrf({ cookie: true }));
 
 // Middlewares
 app.use(require('./src/middlewares/base'));

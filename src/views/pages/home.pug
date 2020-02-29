@@ -13,12 +13,11 @@ block content
         form(action=`/applets/${applet.id}/unsubscribe`, method='POST')
           input(type='hidden', name='_csrf', value=csrfToken)
           button(type='submit') Unsubscribe
-        form(action=`/applets/run/${applet.token}`, method='POST')
-          input(type='hidden', name='_csrf', value=csrfToken)
-          button(type='submit') Manual trigger
       else
         form(action=`/applets/${applet.id}/subscribe`, method='POST')
           input(type='hidden', name='_csrf', value=csrfToken)
+          label(for='expression') Time expression
+          input#expression(type='text', name='expression')
           each parameter in JSON.parse(applet.parameters)
             label(for=parameter)= parameter.charAt(0).toUpperCase() + parameter.slice(1)
             input(type='text', id=parameter, name=parameter, required)

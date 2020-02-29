@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@sendgrid/mail": "^6.5.3",
+    "axios": "^0.19.2",
     "bcrypt": "^4.0.0",
     "connect-ensure-login": "^0.1.1",
     "connect-flash": "^0.1.1",

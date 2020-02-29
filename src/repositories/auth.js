@@ -14,6 +14,12 @@ const comparePassword = async (plain, hashed) => {
   }
 };
 
+const comparePasswordHashes = (hash1, hash2) => {
+  if (hash1 !== hash2) {
+    throw createError(403, 'Provided password is incorrect.');
+  }
+};
+
 const createResetPasswordRequest = async username => {
   const { id, email } = await usersRepository.findUserByUsername(username);
   const token = nanoid(64);
@@ -77,6 +83,7 @@ const PassportLocalStrategy = new LocalStrategy(
 
 module.exports = {
   comparePassword,
+  comparePasswordHashes,
   createResetPasswordRequest,
   hashPassword,
   login,
