@@ -3,7 +3,7 @@ const createError = require('http-errors');
 const nanoid = require('nanoid');
 const LocalStrategy = require('passport-local').Strategy;
 
-const { db } = require('../clients');
+const { db, sg } = require('../clients');
 const usersRepository = require('../repositories/users');
 const userPasswordChangeRequestsRepository = require('../repositories/userPasswordChangeRequests');
 
@@ -15,10 +15,17 @@ const comparePassword = async (plain, hashed) => {
 };
 
 const createResetPasswordRequest = async username => {
-  const { id } = await usersRepository.findUserByUsername(username);
+  const { id, email } = await usersRepository.findUserByUsername(username);
+  const token = nanoid(64);
   await db('userPasswordChangeRequests').insert({
     userId: id,
-    token: nanoid(64)
+    token
+  });
+  await sg.send({
+    to: email,
+    from: process.env.SG_FROM_EMAIL,
+    templateId: 'd-e28f424c1e674799a5b155ad213d42e1',
+    dynamic_template_data: { token }
   });
 };
 
