@@ -5,14 +5,18 @@ const { db } = require('../clients');
 
 const getApplets = async userId =>
   await db('applets')
-    .leftJoin('userApplets', 'applets.id', 'userApplets.appletId')
+    .leftJoin('userApplets', function() {
+      this.on('applets.id', 'userApplets.appletId').on(
+        'userApplets.userId',
+        userId
+      );
+    })
     .select(
       'applets.id',
       'applets.name',
       'applets.description',
-      db.raw(
-        `case when userApplets.userId = ${userId} then userApplets.token else null end as token`
-      )
+      'applets.parameters',
+      'userApplets.token'
     );
 
 const queryAppletByToken = async (

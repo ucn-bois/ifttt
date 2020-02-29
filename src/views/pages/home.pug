@@ -19,8 +19,9 @@ block content
       else
         form(action=`/applets/${applet.id}/subscribe`, method='POST')
           input(type='hidden', name='_csrf', value=csrfToken)
-          label(for='location') Location
-          input#location(type='text', name='location', required)
+          each parameter in JSON.parse(applet.parameters)
+            label(for=parameter)= parameter.charAt(0).toUpperCase() + parameter.slice(1)
+            input(type='text', id=parameter, name=parameter, required)
           button(type='submit') Subscribe
   else
     div No applets :(
