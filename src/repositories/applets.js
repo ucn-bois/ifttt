@@ -59,17 +59,18 @@ const queryUserAppletByToken = async (
   return applet;
 };
 
+// @TODO: Let SQL query exceptions to bubble up.
 const runAppletByToken = async (token, hashedPassword) => {
+  const { config, script, email, password } = await queryUserAppletByToken(
+    token
+  );
+  authRepository.comparePasswordHashes(hashedPassword, password);
   try {
-    const { config, script, email, password } = await queryUserAppletByToken(
-      token
-    );
-    authRepository.comparePasswordHashes(hashedPassword, password);
     require(`../applets/${script}`)(JSON.parse(config), email);
-  } catch (err) {
+  } catch ({ message }) {
     throw createError(
       500,
-      'There was a problem running applet. Please try again.'
+      `There was a problem running applet. Please try again. Error: ${message}`
     );
   }
 };
