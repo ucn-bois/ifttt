@@ -4,6 +4,7 @@ const signOutRequired = require('connect-ensure-login').ensureLoggedOut;
 const signInRequired = require('connect-ensure-login').ensureLoggedIn;
 
 const authRepository = require('../repositories/auth');
+const userRepository = require('../repositories/users');
 const userPasswordChangeRequestsRepository = require('../repositories/userPasswordChangeRequests');
 
 router.get('/sign-in', signOutRequired('/'), (req, res) => {
@@ -83,6 +84,37 @@ router.post(
       await authRepository.resetUserPassword(token, password, repeatedPassword);
       req.flash('success', 'You can now sign in!');
       res.redirect('/sign-in');
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.get(
+  '/change-password',
+  signInRequired('/sign-in'),
+  (req, res) => {
+    res.render('pages/change-password');
+  }
+);
+
+router.post(
+  '/change-password',
+  signInRequired('/sign-in'),
+  async (req, res, next) => {
+    try {
+      const { id: userId, password } = req.user;
+      const { oldPassword, newPassword, repeatedNewPassword } = req.body;
+      await authRepository.comparePassword(oldPassword, password);
+      if (newPassword.localeCompare(repeatedNewPassword) === 0) {
+        const hashedPassword = await authRepository.hashPassword(newPassword);
+        await userRepository.changeUserPassword(userId.toString(), hashedPassword);
+        req.flash(`success`,`Password successfully changed.`);
+        res.redirect('/');
+      } else {
+        req.flash(`fail`,`Passwords do not match.`);
+        res.redirect('/change-password');
+      }
     } catch (err) {
       next(err);
     }
