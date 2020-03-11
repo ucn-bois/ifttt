@@ -31,3 +31,5 @@ create table userRequests
 create unique index userRequests_token_uindex
     on userRequests (token);
 
+alter table users
+    add isVerified boolean default false not null;
