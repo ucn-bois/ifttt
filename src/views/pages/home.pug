@@ -2,7 +2,10 @@ extends ../base
 
 block content
   p Welcome #{user.username}. This is homepage.
-  a(href='/sign-out') Log out
+  p
+    a(href='/change-password') Change password
+  p
+    a(href='/sign-out') Log out
   h1 Applets
   each applet in applets
     div

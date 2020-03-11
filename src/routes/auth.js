@@ -4,6 +4,7 @@ const signOutRequired = require('connect-ensure-login').ensureLoggedOut;
 const signInRequired = require('connect-ensure-login').ensureLoggedIn;
 
 const authRepository = require('../repositories/auth');
+const userRepository = require('../repositories/users');
 const userPasswordChangeRequestsRepository = require('../repositories/userPasswordChangeRequests');
 
 router.get('/sign-in', signOutRequired('/'), (req, res) => {
@@ -38,6 +39,14 @@ router.get(
     } catch (err) {
       next(err);
     }
+  }
+);
+
+router.get(
+  '/change-password',
+  signInRequired('/sign-in'),
+  (req, res) => {
+    res.render('pages/change-password');
   }
 );
 
@@ -83,6 +92,22 @@ router.post(
       await authRepository.resetUserPassword(token, password, repeatedPassword);
       req.flash('success', 'You can now sign in!');
       res.redirect('/sign-in');
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.post(
+  '/change-password',
+  signInRequired('/sign-in'),
+  async (req, res, next) => {
+    try {
+      const { id: userId, password } = req.user;
+      const { oldPassword, newPassword, repeatedNewPassword } = req.body;
+      await authRepository.changePassword(userId, password, oldPassword, newPassword, repeatedNewPassword);
+      req.flash(`success`,`Password successfully changed.`);
+      res.redirect('/');
     } catch (err) {
       next(err);
     }
