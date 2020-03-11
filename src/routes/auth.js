@@ -50,6 +50,14 @@ router.get(
   }
 );
 
+router.get(
+  '/change-email',
+  signInRequired('/sign-in'),
+  (req, res) => {
+    res.render('pages/change-email');
+  }
+);
+
 router.post('/sign-up', signOutRequired('/'), async (req, res, next) => {
   try {
     await authRepository.signUp(req.body);
@@ -109,6 +117,22 @@ router.post(
       req.flash(`success`,`Password successfully changed.`);
       res.redirect('/');
     } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.post(
+  '/change-email',
+  signInRequired('/sign-in'),
+  async (req, res, next) => {
+    try {
+      const { id: userId, email } = req.user;
+      const { newEmail } = req.body;
+      await authRepository.changeEmail(userId, email, newEmail);
+      req.flash(`success`,`Email successfully changed`);
+      res.redirect('/');
+    } catch(err) {
       next(err);
     }
   }

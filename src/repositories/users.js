@@ -12,6 +12,16 @@ const changeUserPassword = async (id, password) => {
     });
 };
 
+const changeUserEmail = async (id, email) => {
+  await db('users')
+    .where({
+      id
+    })
+    .update({
+      email
+    });
+};
+
 const createUser = async (username, email, password) => {
   await db('users').insert({
     username,
@@ -53,6 +63,7 @@ const serializeUser = (user, done) => done(null, user.id);
 
 module.exports = {
   changeUserPassword,
+  changeUserEmail,
   createUser,
   deserializeUser,
   findUserById,

@@ -79,6 +79,14 @@ const changePassword = async (id, password, oldPassword, newPassword, repeatedNe
   }
 };
 
+const changeEmail = async (id, email, newEmail) => {
+  if (newEmail !== email) {
+    await usersRepository.changeUserEmail(id, newEmail);
+  } else {
+    throw createError(400, 'Please enter a new email');
+  }
+};
+
 const PassportLocalStrategy = new LocalStrategy(
   async (username, password, done) => {
     try {
@@ -99,5 +107,6 @@ module.exports = {
   resetUserPassword,
   signUp,
   changePassword,
+  changeEmail,
   PassportLocalStrategy
 };
