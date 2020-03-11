@@ -14,12 +14,12 @@ const changeUserPassword = async (id, password) => {
 
 const changeUserEmail = async (id, email) => {
   await db('users')
-      .where({
-        id
-      })
-      .update({
-        email
-      });
+    .where({
+      id
+    })
+    .update({
+      email
+    });
 };
 
 const createUser = async (username, email, password) => {

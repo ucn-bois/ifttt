@@ -42,6 +42,25 @@ router.get(
   }
 );
 
+<<<<<<< Updated upstream
+=======
+router.get(
+  '/change-password',
+  signInRequired('/sign-in'),
+  (req, res) => {
+    res.render('pages/change-password');
+  }
+);
+
+router.get(
+  '/change-email',
+  signInRequired('/sign-in'),
+  (req, res) => {
+    res.render('pages/change-email');
+  }
+);
+
+>>>>>>> Stashed changes
 router.post('/sign-up', signOutRequired('/'), async (req, res, next) => {
   try {
     await authRepository.signUp(req.body);
@@ -128,23 +147,17 @@ router.get('/change-email',
   }
 );
 
-router.post('/change-email',
+router.post(
+  '/change-email',
   signInRequired('/sign-in'),
-  async(req, res, next) => {
+  async (req, res, next) => {
     try {
       const { id: userId, email } = req.user;
       const { newEmail } = req.body;
-      if (newEmail !== email) {
-        req.flash(`id`, userId);
-        req.flash(`email`, newEmail);
-        await userRepository.changeUserEmail(userId.toString(), newEmail);
-        req.flash(`success`, `Email successfully changed.`)
-        res.redirect('/');
-      } else {
-        req.flash(`fail`, `Please enter a different email from your current one.`);
-        res.redirect('/change-email');
-      }
-    } catch (err) {
+      await authRepository.changeEmail(id, email, newEmail);
+      req.flash(`success`,`Email successfully changed`);
+      res.redirect('/');
+    } catch(err) {
       next(err);
     }
   }

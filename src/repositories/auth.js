@@ -70,6 +70,23 @@ const signUp = async ({ username, email, password, repeatedPassword }) => {
   );
 };
 
+const changePassword = async (id, password, oldPassword, newPassword, repeatedNewPassword) => {
+  await comparePassword(oldPassword, password);
+  if (newPassword === repeatedNewPassword) {
+    await usersRepository.changeUserPassword(id, await hashPassword(newPassword));
+  } else {
+    throw createError(400, 'Passwords do not match.');
+  }
+};
+
+const changeEmail = async (id, email, newEmail) => {
+  if (newEmail !== email) {
+    await usersRepository.changeUserEmail(id, newEmail);
+  } else {
+    throw createError(400, 'Please enter a new email');
+  }
+};
+
 const PassportLocalStrategy = new LocalStrategy(
   async (username, password, done) => {
     try {
@@ -89,5 +106,7 @@ module.exports = {
   login,
   resetUserPassword,
   signUp,
+  changePassword,
+  changeEmail,
   PassportLocalStrategy
 };
