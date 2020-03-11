@@ -42,6 +42,14 @@ router.get(
   }
 );
 
+router.get(
+  '/change-password',
+  signInRequired('/sign-in'),
+  (req, res) => {
+    res.render('pages/change-password');
+  }
+);
+
 router.post('/sign-up', signOutRequired('/'), async (req, res, next) => {
   try {
     await authRepository.signUp(req.body);
@@ -90,14 +98,6 @@ router.post(
   }
 );
 
-router.get(
-  '/change-password',
-  signInRequired('/sign-in'),
-  (req, res) => {
-    res.render('pages/change-password');
-  }
-);
-
 router.post(
   '/change-password',
   signInRequired('/sign-in'),
@@ -105,16 +105,9 @@ router.post(
     try {
       const { id: userId, password } = req.user;
       const { oldPassword, newPassword, repeatedNewPassword } = req.body;
-      await authRepository.comparePassword(oldPassword, password);
-      if (newPassword.localeCompare(repeatedNewPassword) === 0) {
-        const hashedPassword = await authRepository.hashPassword(newPassword);
-        await userRepository.changeUserPassword(userId.toString(), hashedPassword);
-        req.flash(`success`,`Password successfully changed.`);
-        res.redirect('/');
-      } else {
-        req.flash(`fail`,`Passwords do not match.`);
-        res.redirect('/change-password');
-      }
+      await authRepository.changePassword(userId, password, oldPassword, newPassword, repeatedNewPassword);
+      req.flash(`success`,`Password successfully changed.`);
+      res.redirect('/');
     } catch (err) {
       next(err);
     }
