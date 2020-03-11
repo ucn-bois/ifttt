@@ -5,7 +5,10 @@ const appletsRepository = require('../repositories/applets');
 
 router.get('/', authRequired('/sign-in'), async (req, res, next) => {
   try {
-    const { id } = req.user;
+    const { id, isVerified } = req.user;
+    if (!isVerified) {
+      res.render('pages/user-not-verified');
+    }
     res.render('pages/home', {
       applets: await appletsRepository.getApplets(id)
     });

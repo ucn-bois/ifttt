@@ -1,5 +1,7 @@
 const createError = require('http-errors');
 
+const userRequestRepository = require('./userRequests');
+
 const { db } = require('../clients');
 
 const changeUserPassword = async (id, password) => {
@@ -61,6 +63,23 @@ const findUserByUsername = async username => {
 
 const serializeUser = (user, done) => done(null, user.id);
 
+const verifyUser = async token => {
+  const {
+    userId,
+    actionId
+  } = await userRequestRepository.findUserRequestByToken(token);
+  if (actionId !== 2) {
+    throw createError(
+      400,
+      'Token provided does not serve for user verification.'
+    );
+  }
+  await userRequestRepository.invalidateUserRequest(token);
+  await db('users')
+    .where({ id: userId })
+    .update({ isVerified: true });
+};
+
 module.exports = {
   changeUserPassword,
   changeUserEmail,
@@ -68,5 +87,6 @@ module.exports = {
   deserializeUser,
   findUserById,
   findUserByUsername,
-  serializeUser
+  serializeUser,
+  verifyUser
 };

@@ -1,11 +1,10 @@
 const bcrypt = require('bcrypt');
 const createError = require('http-errors');
-const nanoid = require('nanoid');
 const LocalStrategy = require('passport-local').Strategy;
 
-const { db, sg } = require('../clients');
+const { sg } = require('../clients');
 const usersRepository = require('../repositories/users');
-const userPasswordChangeRequestsRepository = require('../repositories/userPasswordChangeRequests');
+const userRequestsRepository = require('../repositories/userRequests');
 
 const comparePassword = async (plain, hashed) => {
   const match = await bcrypt.compare(plain, hashed);
@@ -22,11 +21,7 @@ const comparePasswordHashes = (hash1, hash2) => {
 
 const createResetPasswordRequest = async username => {
   const { id, email } = await usersRepository.findUserByUsername(username);
-  const token = nanoid(64);
-  await db('userPasswordChangeRequests').insert({
-    userId: id,
-    token
-  });
+  const token = await userRequestsRepository.createUserRequest(id, 1);
   await sg.send({
     to: email,
     from: process.env.SG_FROM_EMAIL,
@@ -49,14 +44,17 @@ const resetUserPassword = async (token, password, repeatedPassword) => {
     throw createError(400, 'Passwords do not match.');
   }
   const {
-    userId: id
-  } = await userPasswordChangeRequestsRepository.findUserPasswordChangeRequestByToken(
-    token
+    userId,
+    actionId
+  } = await userRequestsRepository.findUserRequestByToken(token);
+  if (actionId !== 1) {
+    throw createError(400, 'Token provided does not serve for password reset');
+  }
+  await userRequestsRepository.invalidateUserRequest(token);
+  await usersRepository.changeUserPassword(
+    userId,
+    await hashPassword(password)
   );
-  await userPasswordChangeRequestsRepository.invalidatePasswordChangeRequest(
-    token
-  );
-  await usersRepository.changeUserPassword(id, await hashPassword(password));
 };
 
 const signUp = async ({ username, email, password, repeatedPassword }) => {
@@ -68,12 +66,29 @@ const signUp = async ({ username, email, password, repeatedPassword }) => {
     email,
     await hashPassword(password)
   );
+  const { id } = await usersRepository.findUserByUsername(username);
+  const token = await userRequestsRepository.createUserRequest(id, 2);
+  await sg.send({
+    to: email,
+    from: process.env.SG_FROM_EMAIL,
+    templateId: 'd-20c4415293cc41db90ebe330b42fe312',
+    dynamic_template_data: { token }
+  });
 };
 
-const changePassword = async (id, password, oldPassword, newPassword, repeatedNewPassword) => {
+const changePassword = async (
+  id,
+  password,
+  oldPassword,
+  newPassword,
+  repeatedNewPassword
+) => {
   await comparePassword(oldPassword, password);
   if (newPassword === repeatedNewPassword) {
-    await usersRepository.changeUserPassword(id, await hashPassword(newPassword));
+    await usersRepository.changeUserPassword(
+      id,
+      await hashPassword(newPassword)
+    );
   } else {
     throw createError(400, 'Passwords do not match.');
   }

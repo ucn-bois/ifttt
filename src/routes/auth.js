@@ -4,8 +4,8 @@ const signOutRequired = require('connect-ensure-login').ensureLoggedOut;
 const signInRequired = require('connect-ensure-login').ensureLoggedIn;
 
 const authRepository = require('../repositories/auth');
-const userRepository = require('../repositories/users');
-const userPasswordChangeRequestsRepository = require('../repositories/userPasswordChangeRequests');
+const usersRepository = require('../repositories/users');
+const userRequestsRepository = require('../repositories/userRequests');
 
 router.get('/sign-in', signOutRequired('/'), (req, res) => {
   res.render('pages/sign-in');
@@ -30,9 +30,7 @@ router.get(
   async (req, res, next) => {
     try {
       const { token } = req.params;
-      await userPasswordChangeRequestsRepository.findUserPasswordChangeRequestByToken(
-        token
-      );
+      await userRequestsRepository.findUserRequestByToken(token);
       res.render('pages/reset-password', {
         token
       });
@@ -42,21 +40,24 @@ router.get(
   }
 );
 
-router.get(
-  '/change-password',
-  signInRequired('/sign-in'),
-  (req, res) => {
-    res.render('pages/change-password');
-  }
-);
+router.get('/change-password', signInRequired('/sign-in'), (req, res) => {
+  res.render('pages/change-password');
+});
 
-router.get(
-  '/change-email',
-  signInRequired('/sign-in'),
-  (req, res) => {
-    res.render('pages/change-email');
+router.get('/change-email', signInRequired('/sign-in'), (req, res) => {
+  res.render('pages/change-email');
+});
+
+router.get('/verify-email/:token', async (req, res, next) => {
+  try {
+    const { token } = req.params;
+    await usersRepository.verifyUser(token);
+    req.flash('success', 'Your account is now verified!');
+    res.redirect('/');
+  } catch (err) {
+    next(err);
   }
-);
+});
 
 router.post('/sign-up', signOutRequired('/'), async (req, res, next) => {
   try {
@@ -113,8 +114,14 @@ router.post(
     try {
       const { id: userId, password } = req.user;
       const { oldPassword, newPassword, repeatedNewPassword } = req.body;
-      await authRepository.changePassword(userId, password, oldPassword, newPassword, repeatedNewPassword);
-      req.flash(`success`,`Password successfully changed.`);
+      await authRepository.changePassword(
+        userId,
+        password,
+        oldPassword,
+        newPassword,
+        repeatedNewPassword
+      );
+      req.flash(`success`, `Password successfully changed.`);
       res.redirect('/');
     } catch (err) {
       next(err);
@@ -130,9 +137,9 @@ router.post(
       const { id: userId, email } = req.user;
       const { newEmail } = req.body;
       await authRepository.changeEmail(userId, email, newEmail);
-      req.flash(`success`,`Email successfully changed`);
+      req.flash(`success`, `Email successfully changed`);
       res.redirect('/');
-    } catch(err) {
+    } catch (err) {
       next(err);
     }
   }
