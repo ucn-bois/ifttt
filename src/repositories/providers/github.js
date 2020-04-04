@@ -18,9 +18,9 @@ const getTokenByCode = async code => {
     'https://github.com/login/oauth/access_token',
     qs.stringify({
       code,
-      client_id: '6433b4b5cf4bcbb2c8f1',
-      client_secret: 'a96439f723670b6143a463266b0c2bc842ce216d',
-      redirect_uri: 'http://127.0.0.1:8000/providers/github/authorize'
+      client_id: process.env.GITHUB_APP_ID,
+      client_secret: process.env.GITHUB_APP_SECRET,
+      redirect_uri: process.env.GITHUB_REDIRECT_URI
     }),
     {
       headers: {

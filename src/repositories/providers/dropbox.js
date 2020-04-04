@@ -27,15 +27,15 @@ const getTokenByCode = async code => {
     qs.stringify({
       code,
       grant_type: 'authorization_code',
-      redirect_uri: 'http://127.0.0.1:8000/providers/dropbox/authorize'
+      redirect_uri: process.env.DROPBOX_REDIRECT_URI
     }),
     {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
       auth: {
-        username: 'bqac1w42q5ef0p4',
-        password: 'fg13u1saldduza8'
+        username: process.env.DROPBOX_APP_ID,
+        password: process.env.DROPBOX_APP_SECRET
       }
     }
   );
