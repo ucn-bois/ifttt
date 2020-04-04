@@ -2,7 +2,7 @@ const router = require('express').Router();
 
 const appletsRepository = require('../../repositories/applets');
 
-router.post('/applets/run/:token', async (req, res, next) => {
+router.post('/api/applets/run/:token', async (req, res, next) => {
   try {
     const { password } = req.body;
     const { token } = req.params;

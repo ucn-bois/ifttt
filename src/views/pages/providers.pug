@@ -1,0 +1,19 @@
+extends ../base
+
+block content
+  h1 Providers
+  each provider in providers
+    #provider.id
+      p
+        b Name: #{provider.name}
+      if provider.token
+        p Your account is already connected
+      else
+        a(href=provider.authUrl + `&state=providerId:${provider.id}`) Authorize
+        form(action=`/providers/${provider.id}/connect`, method='POST')
+          input(type='hidden', name='_csrf', value=csrfToken)
+          label(for='code')
+          input#code(type='text', name='code', required)
+          button(type='submit') Connect
+  else
+    div No providers :(

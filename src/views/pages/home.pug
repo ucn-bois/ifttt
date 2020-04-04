@@ -8,8 +8,34 @@ block content
     a(href='/change-email') Change email
   p
     a(href='/sign-out') Log out
-  h1 Applets
-  each applet in applets
+  h1 Provider based applets
+  each applet in applets.providerBased
+    div
+      p
+        b Name: #{applet.name}
+      p Description: #{applet.description}
+      if !applet.providerToken
+        p This applet depends on one of our many providers.
+        a(href=`/providers#${applet.providerId}`) Visit this link to connect
+      else
+        if applet.token
+          div Unsubscribe functionality coming up soon
+          //form(action=`/applets/${applet.id}/unsubscribe`, method='POST')
+          //  input(type='hidden', name='_csrf', value=csrfToken)
+          //  button(type='submit') Unsubscribe
+        else
+          div Subscribe functionality coming up soon
+          //form(action=`/applets/${applet.id}/subscribe`, method='POST')
+          //  input(type='hidden', name='_csrf', value=csrfToken)
+          //  each parameter in JSON.parse(applet.parameters)
+          //    label(for=parameter)= parameter.charAt(0).toUpperCase() + parameter.slice(1)
+          //    input(type='text', id=parameter, name=parameter, required)
+          //  button(type='submit') Subscribe
+  else
+    div No provider based applets found
+
+  h1 Schedule based applets
+  each applet in applets.scheduleBased
     div
       p
         b Name: #{applet.name}
@@ -28,4 +54,4 @@ block content
             input(type='text', id=parameter, name=parameter, required)
           button(type='submit') Subscribe
   else
-    div No applets :(
+    div No schedule based applets found

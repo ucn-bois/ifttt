@@ -5,11 +5,17 @@ const { db } = require('../clients');
 const authRepository = require('../repositories/auth');
 const schedulerRepository = require('../repositories/scheduler');
 
-const getApplets = async userId =>
-  await db('applets')
+const getApplets = async userId => {
+  const results = await db('applets')
     .leftJoin('userApplets', function() {
       this.on('applets.id', 'userApplets.appletId').on(
         'userApplets.userId',
+        userId
+      );
+    })
+    .leftJoin('userProviders', function() {
+      this.on('userProviders.providerId', 'applets.providerId').on(
+        'userProviders.userId',
         userId
       );
     })
@@ -18,8 +24,23 @@ const getApplets = async userId =>
       'applets.name',
       'applets.description',
       'applets.parameters',
-      'userApplets.token'
+      'applets.providerId',
+      'userApplets.token',
+      'userProviders.token as providerToken'
     );
+  return results.reduce(
+    (accumulator, result) => {
+      accumulator[result.providerId ? 'providerBased' : 'scheduleBased'].push(
+        result
+      );
+      return accumulator;
+    },
+    {
+      providerBased: [],
+      scheduleBased: []
+    }
+  );
+};
 
 const queryUserAppletByIds = async (appletId, userId) => {
   const applet = await db('userApplets')
