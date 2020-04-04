@@ -22,8 +22,8 @@ create table providers
         unique (name)
 );
 
-insert into providers (id, name, authUrl) values (1, 'dropbox', 'https://www.dropbox.com/oauth2/authorize?client_id=bqac1w42q5ef0p4&response_type=code&redirect_uri=http://207.154.248.85/providers/dropbox/authorize');
-insert into providers (id, name, authUrl) values (2, 'github', 'https://github.com/login/oauth/authorize?client_id=6433b4b5cf4bcbb2c8f1&redirect_uri=http://207.154.248.85/providers/github/authorize');
+insert into providers (id, name, authUrl) values (1, 'dropbox', 'https://www.dropbox.com/oauth2/authorize?client_id=bqac1w42q5ef0p4&response_type=code&redirect_uri=https://ifttt.merys.eu/providers/dropbox/authorize');
+insert into providers (id, name, authUrl) values (2, 'github', 'https://github.com/login/oauth/authorize?client_id=6433b4b5cf4bcbb2c8f1&redirect_uri=https://ifttt.merys.eu/providers/github/authorize');
 
 
 create table applets
