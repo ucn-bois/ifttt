@@ -92,7 +92,7 @@ const subscribeUserToScheduleBasedApplet = async (
   const cronJobId = await schedulerRepository.addScheduledApplet(
     expression,
     password,
-    `https://ifttt.merys.eu/api/applets/run/${token}`
+    `https://ifttt.merys.eu/api/schedule-based/applets/run/${token}`
   );
   await db('scheduleBasedUserApplets').insert({
     appletId,
