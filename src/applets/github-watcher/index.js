@@ -8,7 +8,9 @@ const GITHUB_PROVIDER_ID = 2;
 module.exports = {
   run: (payload, token) => console.log(payload, token),
   subscribe: async (userId, config, token) => {
-    const githubToken = await providersRepository.getTokenByUserIdAndProviderId(
+    const {
+      token: githubToken
+    } = await providersRepository.getTokenByUserIdAndProviderId(
       userId,
       GITHUB_PROVIDER_ID
     );
