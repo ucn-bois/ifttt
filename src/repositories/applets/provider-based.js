@@ -93,7 +93,7 @@ const unsubscribeUserFromProviderBasedApplet = async (
 ) => {
   const applet = require(`../../applets/${script}`);
   const { config } = await queryProviderBasedUserAppletByIds(userId, appletId);
-  applet.unsubscribe && (await applet.unsubscribe(userId, config));
+  applet.unsubscribe && (await applet.unsubscribe(userId, JSON.parse(config)));
   await db('providerBasedUserApplets')
     .where({
       appletId,
