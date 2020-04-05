@@ -66,11 +66,12 @@ const subscribeUserToProviderBasedApplet = async (
 ) => {
   const token = nanoId(64);
   const applet = require(`../../applets/${script}`);
-  applet.subscribe && applet.subscribe(userId, config, token);
+  applet.subscribe && applet.subscribe(userId, JSON.parse(config), token);
   await db('providerBasedUserApplets').insert({
     appletId,
     config,
-    userId
+    userId,
+    token
   });
 };
 

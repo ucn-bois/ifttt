@@ -17,7 +17,7 @@ create table providerBasedUserApplets
 rename table userApplets to scheduleBasedUserApplets;
 
 alter table providerBasedUserApplets
-    add token char(32) not null;
+    add token char(64) not null;
 
 create unique index providerBasedUserApplets_token_uindex
     on providerBasedUserApplets (token);

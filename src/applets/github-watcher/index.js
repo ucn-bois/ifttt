@@ -12,6 +12,7 @@ module.exports = {
       userId,
       GITHUB_PROVIDER_ID
     );
+    console.log(githubToken);
     const response = await axios.post(
       `https://api.github.com/repos/${config.owner}/${config.repository}/hooks`,
       {
