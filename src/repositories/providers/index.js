@@ -15,6 +15,16 @@ const getProvidersByUserId = async userId =>
       'userProviders.token'
     );
 
+const getTokenByUserIdAndProviderId = async (userId, providerId) =>
+  await db('userProviders')
+    .where({
+      userId,
+      providerId
+    })
+    .select('token')
+    .first();
+
 module.exports = {
-  getProvidersByUserId
+  getProvidersByUserId,
+  getTokenByUserIdAndProviderId
 };

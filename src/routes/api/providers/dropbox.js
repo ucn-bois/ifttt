@@ -11,7 +11,7 @@ router.get('/providers/dropbox/webhook', (req, res) => {
 });
 
 router.post('/providers/dropbox/webhook', async req => {
-  await dropboxWatcherApplet(req.body);
+  await dropboxWatcherApplet.run(req.body);
 });
 
 module.exports = router;

@@ -1,4 +1,12 @@
+const createError = require('http-errors');
+const nanoId = require('nanoid');
+
 const { db } = require('../../clients');
+
+const changeProviderBasedUserAppletConfigByToken = async (token, config) =>
+  await db('providerBasedUserApplets')
+    .where({ token })
+    .update({ config });
 
 const getProviderBasedUserApplets = async userId => {
   return db('applets')
@@ -29,14 +37,36 @@ const getProviderBasedUserApplets = async userId => {
     );
 };
 
+const queryProviderBasedUserAppletByToken = async (
+  token,
+  columns = [
+    'providerBasedUserApplets.config',
+    'applets.script',
+    'users.email',
+    'users.password'
+  ]
+) => {
+  const applet = await db('providerBasedUserApplets')
+    .innerJoin('applets', 'providerBasedUserApplets.appletId', 'applets.id')
+    .innerJoin('users', 'providerBasedUserApplets.userId', 'users.id')
+    .select(columns)
+    .where({ token })
+    .first();
+  if (!applet) {
+    throw createError(404, 'Applet with provided token does not exist');
+  }
+  return applet;
+};
+
 const subscribeUserToProviderBasedApplet = async (
   userId,
   appletId,
   config,
   script
 ) => {
+  const token = nanoId(64);
   const applet = require(`../../applets/${script}`);
-  applet.subscribe && applet.subscribe(userId, config);
+  applet.subscribe && applet.subscribe(userId, config, token);
   await db('providerBasedUserApplets').insert({
     appletId,
     config,
@@ -60,6 +90,7 @@ const unsubscribeUserFromProviderBasedApplet = async (
 };
 
 module.exports = {
+  changeProviderBasedUserAppletConfigByToken,
   getProviderBasedUserApplets,
   subscribeUserToProviderBasedApplet,
   unsubscribeUserFromProviderBasedApplet
