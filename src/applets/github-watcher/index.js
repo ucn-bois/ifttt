@@ -14,12 +14,10 @@ module.exports = {
       userId,
       GITHUB_PROVIDER_ID
     );
-    console.log(githubToken);
     const response = await axios.post(
       `https://api.github.com/repos/${config.owner}/${config.repository}/hooks`,
       {
         name: 'web',
-        active: true,
         events: ['push'],
         config: {
           url: `https://ifttt.merys.eu/providers/github/webhook/${token}`,
@@ -36,7 +34,7 @@ module.exports = {
     const { id: hookId } = response.data;
     await providerBasedAppletsRepository.changeProviderBasedUserAppletConfigByToken(
       token,
-      { ...config, hookId }
+      JSON.stringify({ ...config, hookId })
     );
   },
   unsubscribe: userId =>
