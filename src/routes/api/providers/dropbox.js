@@ -1,5 +1,7 @@
 const router = require('express').Router();
 
+const dropboxWatcherApplet = require('../../../applets/dropbox-watcher');
+
 router.get('/providers/dropbox/webhook', (req, res) => {
   res.headers = {
     'Content-Type': 'text/plain',
@@ -8,8 +10,8 @@ router.get('/providers/dropbox/webhook', (req, res) => {
   return res.send(req.query.challenge);
 });
 
-router.post('/providers/dropbox/webhook', req => {
-  console.log(req.body);
+router.post('/providers/dropbox/webhook', async req => {
+  await dropboxWatcherApplet(req.body);
 });
 
 module.exports = router;
