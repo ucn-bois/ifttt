@@ -13,12 +13,12 @@ const getScheduleBasedUserApplets = async userId => {
         userId
       );
     })
+    .whereNull('applets.providerId')
     .select(
       'applets.id',
       'applets.name',
       'applets.description',
       'applets.parameters',
-      'applets.providerId',
       'scheduleBasedUserApplets.token'
     );
 };
