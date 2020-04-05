@@ -3,65 +3,10 @@ extends ../base
 block content
   p Welcome #{user.username}. This is homepage.
   p
+    a(href='/providers') Providers
+  p
     a(href='/change-password') Change password
   p
     a(href='/change-email') Change email
   p
     a(href='/sign-out') Log out
-  h1 Provider based applets
-  each applet in providerBasedApplets
-    div
-      p
-        b Name: #{applet.name} #{applet.script}
-      p Description: #{applet.description}
-      if !applet.token
-        p This applet depends on one of our many providers.
-        a(href=`/providers#${applet.providerId}`) Visit this link to connect
-      else
-        if applet.subscribed
-          form(
-            action=`/applets/provider-based/${applet.id}/${applet.script}/unsubscribe`,
-            method='POST'
-          )
-            input(type='hidden', name='_csrf', value=csrfToken)
-            button(type='submit') Unsubscribe
-        else
-          form(
-            action=`/applets/provider-based/${applet.id}/${applet.script}/subscribe`,
-            method='POST'
-          )
-            input(type='hidden', name='_csrf', value=csrfToken)
-            each parameter in JSON.parse(applet.parameters)
-              label(for=parameter)= parameter.charAt(0).toUpperCase() + parameter.slice(1)
-              input(type='text', id=parameter, name=parameter, required)
-            button(type='submit') Subscribe
-  else
-    div No provider based applets found
-
-  h1 Schedule based applets
-  each applet in scheduleBasedApplets
-    div
-      p
-        b Name: #{applet.name} #{applet.script}
-      p Description: #{applet.description}
-      if applet.token
-        form(
-          action=`/applets/schedule-based/${applet.id}/${applet.script}/unsubscribe`,
-          method='POST'
-        )
-          input(type='hidden', name='_csrf', value=csrfToken)
-          button(type='submit') Unsubscribe
-      else
-        form(
-          action=`/applets/schedule-based/${applet.id}/${applet.script}/subscribe`,
-          method='POST'
-        )
-          input(type='hidden', name='_csrf', value=csrfToken)
-          label(for='expression') Time expression
-          input#expression(type='text', name='expression')
-          each parameter in JSON.parse(applet.parameters)
-            label(for=parameter)= parameter.charAt(0).toUpperCase() + parameter.slice(1)
-            input(type='text', id=parameter, name=parameter, required)
-          button(type='submit') Subscribe
-  else
-    div No schedule based applets found
