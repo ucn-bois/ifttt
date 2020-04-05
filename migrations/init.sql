@@ -63,7 +63,7 @@ CREATE TABLE `providers` (
 
 LOCK TABLES `providers` WRITE;
 /*!40000 ALTER TABLE `providers` DISABLE KEYS */;
-INSERT INTO `providers` VALUES (1,'dropbox','https://www.dropbox.com/oauth2/authorize?client_id=bqac1w42q5ef0p4&response_type=code&redirect_uri=http://localhost:8000/providers/dropbox/authorize'),(2,'github','https://github.com/login/oauth/authorize?client_id=6433b4b5cf4bcbb2c8f1&redirect_uri=http://localhost:8000/providers/github/authorize');
+INSERT INTO `providers` VALUES (1,'dropbox','https://www.dropbox.com/oauth2/authorize?client_id=awfobs54uj95nyg&response_type=code&redirect_uri=http://localhost:8000/providers/dropbox/authorize'),(2,'github','https://github.com/login/oauth/authorize?client_id=e9b830cdbeb4478ef0c2&redirect_uri=http://localhost:8000/providers/github/authorize');
 /*!40000 ALTER TABLE `providers` ENABLE KEYS */;
 UNLOCK TABLES;
 
