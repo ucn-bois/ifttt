@@ -5,11 +5,11 @@ const providerBasedAppletsRepository = require('../repositories/applets/provider
 const scheduledBasedAppletsRepository = require('../repositories/applets/schedule-based');
 
 router.post(
-  '/applets/schedule-based/:id/subscribe',
+  '/applets/schedule-based/:id/:script/subscribe',
   signInRequired('/sign-in'),
   async (req, res, next) => {
     try {
-      const { id } = req.params;
+      const { id, script } = req.params;
       const { id: userId, password } = req.user;
       const { _csrf, expression, ...config } = req.body;
       await scheduledBasedAppletsRepository.subscribeUserToScheduleBasedApplet(
@@ -17,7 +17,8 @@ router.post(
         id,
         JSON.stringify(config),
         expression,
-        password
+        password,
+        script
       );
       req.flash('success', 'You just got subscribed');
       res.redirect('/');
@@ -28,15 +29,16 @@ router.post(
 );
 
 router.post(
-  '/applets/schedule-based/:id/unsubscribe',
+  '/applets/schedule-based/:id/:script/unsubscribe',
   signInRequired('/sign-in'),
   async (req, res, next) => {
     try {
-      const { id } = req.params;
+      const { id, script } = req.params;
       const { id: userId } = req.user;
       await scheduledBasedAppletsRepository.unsubscribeUserFromScheduleBasedApplet(
         id,
-        userId
+        userId,
+        script
       );
       req.flash('success', 'You just got unsubscribed');
       res.redirect('/');
@@ -47,17 +49,18 @@ router.post(
 );
 
 router.post(
-  '/applets/provider-based/:id/subscribe',
+  '/applets/provider-based/:id/:script/subscribe',
   signInRequired('/sign-in'),
   async (req, res, next) => {
     try {
-      const { id } = req.params;
+      const { id, script } = req.params;
       const { id: userId } = req.user;
       const { _csrf, ...config } = req.body;
       await providerBasedAppletsRepository.subscribeUserToProviderBasedApplet(
         userId,
         id,
-        JSON.stringify(config)
+        JSON.stringify(config),
+        script
       );
       req.flash('success', 'You just got subscribed');
       res.redirect('/');
@@ -68,15 +71,16 @@ router.post(
 );
 
 router.post(
-  '/applets/provider-based/:id/unsubscribe',
+  '/applets/provider-based/:id/:script/unsubscribe',
   signInRequired('/sign-in'),
   async (req, res, next) => {
     try {
-      const { id } = req.params;
+      const { id, script } = req.params;
       const { id: userId } = req.user;
       await providerBasedAppletsRepository.unsubscribeUserFromProviderBasedApplet(
         id,
-        userId
+        userId,
+        script
       );
       req.flash('success', 'You just got unsubscribed');
       res.redirect('/');

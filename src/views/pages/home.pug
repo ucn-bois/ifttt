@@ -12,7 +12,7 @@ block content
   each applet in providerBasedApplets
     div
       p
-        b Name: #{applet.name}
+        b Name: #{applet.name} #{applet.script}
       p Description: #{applet.description}
       if !applet.token
         p This applet depends on one of our many providers.
@@ -20,14 +20,14 @@ block content
       else
         if applet.subscribed
           form(
-            action=`/applets/provider-based/${applet.id}/unsubscribe`,
+            action=`/applets/provider-based/${applet.id}/${applet.script}/unsubscribe`,
             method='POST'
           )
             input(type='hidden', name='_csrf', value=csrfToken)
             button(type='submit') Unsubscribe
         else
           form(
-            action=`/applets/provider-based/${applet.id}/subscribe`,
+            action=`/applets/provider-based/${applet.id}/${applet.script}/subscribe`,
             method='POST'
           )
             input(type='hidden', name='_csrf', value=csrfToken)
@@ -42,18 +42,18 @@ block content
   each applet in scheduleBasedApplets
     div
       p
-        b Name: #{applet.name}
+        b Name: #{applet.name} #{applet.script}
       p Description: #{applet.description}
       if applet.token
         form(
-          action=`/applets/schedule-based/${applet.id}/unsubscribe`,
+          action=`/applets/schedule-based/${applet.id}/${applet.script}/unsubscribe`,
           method='POST'
         )
           input(type='hidden', name='_csrf', value=csrfToken)
           button(type='submit') Unsubscribe
       else
         form(
-          action=`/applets/schedule-based/${applet.id}/subscribe`,
+          action=`/applets/schedule-based/${applet.id}/${applet.script}/subscribe`,
           method='POST'
         )
           input(type='hidden', name='_csrf', value=csrfToken)

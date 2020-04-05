@@ -13,7 +13,7 @@ const queryUserEmailsByDropboxAccountId = async accountIds => {
     .select('users.email');
 };
 
-module.exports = async payload => {
+const run = async payload => {
   const {
     list_folder: { accounts }
   } = payload;
@@ -23,4 +23,14 @@ module.exports = async payload => {
     from: process.env.SG_FROM_EMAIL,
     templateId: 'd-2946746abb30473fa20456da920c99e4'
   });
+};
+
+module.exports = {
+  run,
+  subscribe: (userId, config) =>
+    console.log(
+      `Dropbox watcher subscribed! User: ${userId} Config: ${config}`
+    ),
+  unsubscribe: userId =>
+    console.log(`Dropbox watcher unsubscribed! User ${userId}`)
 };

@@ -17,6 +17,7 @@ const getScheduleBasedUserApplets = async userId => {
     .select(
       'applets.id',
       'applets.name',
+      'applets.script',
       'applets.description',
       'applets.parameters',
       'scheduleBasedUserApplets.token'
@@ -72,7 +73,7 @@ const runScheduleBasedAppletByToken = async (token, hashedPassword) => {
   } = await queryScheduleBasedUserAppletByToken(token);
   authRepository.comparePasswordHashes(hashedPassword, password);
   try {
-    require(`../../applets/${script}`)(JSON.parse(config), email);
+    require(`../../applets/${script}`).run(JSON.parse(config), email);
   } catch ({ message }) {
     throw createError(
       500,
@@ -86,8 +87,11 @@ const subscribeUserToScheduleBasedApplet = async (
   appletId,
   config,
   expression = '1 day',
-  password
+  password,
+  script
 ) => {
+  const applet = require(`../../applets/${script}`);
+  applet.subscribe && applet.subscribe(userId, config);
   const token = nanoId(64);
   const cronJobId = await schedulerRepository.addScheduledApplet(
     expression,
@@ -103,7 +107,13 @@ const subscribeUserToScheduleBasedApplet = async (
   });
 };
 
-const unsubscribeUserFromScheduleBasedApplet = async (appletId, userId) => {
+const unsubscribeUserFromScheduleBasedApplet = async (
+  appletId,
+  userId,
+  script
+) => {
+  const applet = require(`../../applets/${script}`);
+  applet.unsubscribe && applet.unsubscribe(userId);
   const { cronJobId } = await queryScheduleBasedUserAppletByIds(
     appletId,
     userId

@@ -18,6 +18,7 @@ const getProviderBasedUserApplets = async userId => {
     .select(
       'applets.id',
       'applets.name',
+      'applets.script',
       'applets.description',
       'applets.parameters',
       'applets.providerId',
@@ -28,20 +29,35 @@ const getProviderBasedUserApplets = async userId => {
     );
 };
 
-const subscribeUserToProviderBasedApplet = async (userId, appletId, config) =>
+const subscribeUserToProviderBasedApplet = async (
+  userId,
+  appletId,
+  config,
+  script
+) => {
+  const applet = require(`../../applets/${script}`);
+  applet.subscribe && applet.subscribe(userId, config);
   await db('providerBasedUserApplets').insert({
     appletId,
     config,
     userId
   });
+};
 
-const unsubscribeUserFromProviderBasedApplet = async (appletId, userId) =>
+const unsubscribeUserFromProviderBasedApplet = async (
+  appletId,
+  userId,
+  script
+) => {
+  const applet = require(`../../applets/${script}`);
+  applet.unsubscribe && applet.unsubscribe(userId);
   await db('providerBasedUserApplets')
     .where({
       appletId,
       userId
     })
     .delete();
+};
 
 module.exports = {
   getProviderBasedUserApplets,
