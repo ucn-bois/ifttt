@@ -46,9 +46,6 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// API
-app.use(require('./src/routes/api'));
-
 // Enforce CSRF protection
 app.use(csrf({ cookie: true }));
 
@@ -58,7 +55,6 @@ app.use(require('./src/middlewares/base'));
 // Routes
 app.use(require('./src/routes/home'));
 app.use(require('./src/routes/auth'));
-app.use(require('./src/routes/applets'));
 app.use(require('./src/routes/providers'));
 
 // 404 Handler
