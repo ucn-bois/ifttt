@@ -17,7 +17,7 @@ module.exports = async payload => {
   const {
     list_folder: { accounts }
   } = payload;
-  const results = queryUserEmailsByDropboxAccountId(accounts);
+  const results = await queryUserEmailsByDropboxAccountId(accounts);
   await sg.send({
     to: results.map(result => result.email),
     from: process.env.SG_FROM_EMAIL,
