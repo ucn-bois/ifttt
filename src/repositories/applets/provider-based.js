@@ -37,6 +37,16 @@ const getProviderBasedUserApplets = async userId => {
     );
 };
 
+const queryProviderBasedUserAppletByIds = async (userId, appletId) => {
+  const applet = await db('providerBasedUserApplets')
+    .where({ userId, appletId })
+    .first();
+  if (!applet) {
+    throw createError(404, 'Applet with provided token does not exist');
+  }
+  return applet;
+};
+
 const queryProviderBasedUserAppletByToken = async (
   token,
   columns = [
@@ -66,7 +76,8 @@ const subscribeUserToProviderBasedApplet = async (
 ) => {
   const token = nanoId(64);
   const applet = require(`../../applets/${script}`);
-  applet.subscribe && applet.subscribe(userId, JSON.parse(config), token);
+  applet.subscribe &&
+    (await applet.subscribe(userId, JSON.parse(config), token));
   await db('providerBasedUserApplets').insert({
     appletId,
     config,
@@ -81,7 +92,8 @@ const unsubscribeUserFromProviderBasedApplet = async (
   script
 ) => {
   const applet = require(`../../applets/${script}`);
-  applet.unsubscribe && applet.unsubscribe(userId);
+  const { config } = await queryProviderBasedUserAppletByIds(userId, appletId);
+  applet.unsubscribe && (await applet.unsubscribe(userId, config));
   await db('providerBasedUserApplets')
     .where({
       appletId,

@@ -37,6 +37,20 @@ module.exports = {
       JSON.stringify({ ...config, hookId })
     );
   },
-  unsubscribe: userId =>
-    console.log(`Github watcher unsubscribed! User ${userId}`)
+  unsubscribe: async (userId, config) => {
+    const {
+      token: githubToken
+    } = await providersRepository.getTokenByUserIdAndProviderId(
+      userId,
+      GITHUB_PROVIDER_ID
+    );
+    await axios.delete(
+      `https://api.github.com/repos/${config.owner}/${config.repository}/hooks/${config.hookId}`,
+      {
+        headers: {
+          Authorization: `token ${githubToken}`
+        }
+      }
+    );
+  }
 };
