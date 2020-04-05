@@ -19,18 +19,22 @@ block content
         a(href=`/providers#${applet.providerId}`) Visit this link to connect
       else
         if applet.subscribed
-          div Unsubscribe functionality coming up soon
-          //form(action=`/applets/${applet.id}/unsubscribe`, method='POST')
-          //  input(type='hidden', name='_csrf', value=csrfToken)
-          //  button(type='submit') Unsubscribe
+          form(
+            action=`/applets/provider-based/${applet.id}/unsubscribe`,
+            method='POST'
+          )
+            input(type='hidden', name='_csrf', value=csrfToken)
+            button(type='submit') Unsubscribe
         else
-          div Subscribe functionality coming up soon
-          //form(action=`/applets/${applet.id}/subscribe`, method='POST')
-          //  input(type='hidden', name='_csrf', value=csrfToken)
-          //  each parameter in JSON.parse(applet.parameters)
-          //    label(for=parameter)= parameter.charAt(0).toUpperCase() + parameter.slice(1)
-          //    input(type='text', id=parameter, name=parameter, required)
-          //  button(type='submit') Subscribe
+          form(
+            action=`/applets/provider-based/${applet.id}/subscribe`,
+            method='POST'
+          )
+            input(type='hidden', name='_csrf', value=csrfToken)
+            each parameter in JSON.parse(applet.parameters)
+              label(for=parameter)= parameter.charAt(0).toUpperCase() + parameter.slice(1)
+              input(type='text', id=parameter, name=parameter, required)
+            button(type='submit') Subscribe
   else
     div No provider based applets found
 

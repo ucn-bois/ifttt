@@ -28,6 +28,23 @@ const getProviderBasedUserApplets = async userId => {
     );
 };
 
+const subscribeUserToProviderBasedApplet = async (userId, appletId, config) =>
+  await db('providerBasedUserApplets').insert({
+    appletId,
+    config,
+    userId
+  });
+
+const unsubscribeUserFromProviderBasedApplet = async (appletId, userId) =>
+  await db('providerBasedUserApplets')
+    .where({
+      appletId,
+      userId
+    })
+    .delete();
+
 module.exports = {
-  getProviderBasedUserApplets
+  getProviderBasedUserApplets,
+  subscribeUserToProviderBasedApplet,
+  unsubscribeUserFromProviderBasedApplet
 };
