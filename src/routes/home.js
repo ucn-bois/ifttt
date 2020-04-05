@@ -1,7 +1,7 @@
 const authRequired = require('connect-ensure-login').ensureLoggedIn;
 const router = require('express').Router();
 
-const appletsRepository = require('../repositories/applets');
+const scheduleBasedAppletsRepository = require('../repositories/applets/schedule-based');
 
 router.get('/', authRequired('/sign-in'), async (req, res, next) => {
   try {
@@ -10,7 +10,9 @@ router.get('/', authRequired('/sign-in'), async (req, res, next) => {
       res.render('pages/user-not-verified');
     }
     res.render('pages/home', {
-      applets: await appletsRepository.getApplets(id)
+      applets: await scheduleBasedAppletsRepository.getScheduleBasedUserApplets(
+        id
+      )
     });
   } catch (err) {
     next(err);

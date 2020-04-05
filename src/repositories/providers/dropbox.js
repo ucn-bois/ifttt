@@ -41,7 +41,20 @@ const getTokenByCode = async code => {
   );
 };
 
+const queryUserEmailsByDropboxAccountId = async accountIds => {
+  const condition = accountIds
+    .map(
+      accountId => `JSON_CONTAINS(parameters, '"${accountId}"', '$.accountId')`
+    )
+    .join(' OR ');
+  return db('userProviders')
+    .innerJoin('users', 'userProviders.userId', 'users.id')
+    .whereRaw(condition)
+    .select('users.email');
+};
+
 module.exports = {
   connectProvider,
-  getTokenByCode
+  getTokenByCode,
+  queryUserEmailsByDropboxAccountId
 };

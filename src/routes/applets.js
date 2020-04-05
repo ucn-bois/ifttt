@@ -1,17 +1,17 @@
 const router = require('express').Router();
 const signInRequired = require('connect-ensure-login').ensureLoggedIn;
 
-const appletsRepository = require('../repositories/applets');
+const appletsRepository = require('../repositories/applets/schedule-based');
 
 router.post(
-  '/applets/:id/subscribe',
+  '/applets/schedule-based/:id/subscribe',
   signInRequired('/sign-in'),
   async (req, res, next) => {
     try {
       const { id } = req.params;
       const { id: userId, password } = req.user;
       const { _csrf, expression, ...config } = req.body;
-      await appletsRepository.subscribeUserToApplet(
+      await appletsRepository.subscribeUserToScheduleBasedApplet(
         userId,
         id,
         JSON.stringify(config),
@@ -27,13 +27,16 @@ router.post(
 );
 
 router.post(
-  '/applets/:id/unsubscribe',
+  '/applets/schedule-based/:id/unsubscribe',
   signInRequired('/sign-in'),
   async (req, res, next) => {
     try {
       const { id } = req.params;
       const { id: userId } = req.user;
-      await appletsRepository.unsubscribeUserFromApplet(id, userId);
+      await appletsRepository.unsubscribeUserFromScheduleBasedApplet(
+        id,
+        userId
+      );
       req.flash('success', 'You just got unsubscribed');
       res.redirect('/');
     } catch (err) {
