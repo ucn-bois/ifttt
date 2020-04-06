@@ -7,6 +7,7 @@ const createUserApplet = async ({
   configuration,
   cronJobId,
   identifier,
+  providerAccessToken,
   userId
 }) =>
   await db('userApplets').insert({
@@ -14,6 +15,7 @@ const createUserApplet = async ({
     configuration,
     cronJobId,
     identifier,
+    providerAccessToken,
     userId
   });
 

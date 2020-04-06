@@ -2,13 +2,11 @@ const router = require('express').Router();
 const nanoid = require('nanoid');
 
 const { ensureLoggedIn } = require('../../../utils');
-const cronJobRepo = require('../../../repositories/cronJob');
+const { APPLET_ID, AUTH_URL, exchangeCodeForAccessToken } = require('../utils');
 const userAppletsRepo = require('../../../repositories/userApplets');
 
-const APPLET_ID = 1;
-
 router.get(
-  '/applets/covid19-report',
+  '/applets/dropbox-watcher',
   ensureLoggedIn,
   async (req, res, next) => {
     try {
@@ -22,7 +20,8 @@ router.get(
       } catch (err) {
         // Do nothing. Continue.
       }
-      res.render('covid19-report/views/index', {
+      res.render('dropbox-watcher/views/index', {
+        AUTH_URL,
         userApplet
       });
     } catch (err) {
@@ -31,30 +30,27 @@ router.get(
   }
 );
 
-router.post(
-  '/applets/covid19-report/subscribe',
+router.get(
+  '/applets/dropbox-watcher/subscribe',
   ensureLoggedIn,
   async (req, res, next) => {
     try {
+      const { code } = req.query;
       const { id: userId } = req.user;
-      const { country, hour, minute } = req.body;
       const identifier = nanoid(64);
-      const cronJobId = await cronJobRepo.createCronJob({
-        expression: `${minute} ${hour} * * *`,
-        httpMethod: 'POST',
-        url: `https://ifttt.merys.eu/api/applets/covid19-report/execute/${identifier}`
-      });
+      const {
+        access_token: providerAccessToken,
+        account_id: accountId,
+        team_id: teamId
+      } = await exchangeCodeForAccessToken(code);
       await userAppletsRepo.createUserApplet({
         appletId: APPLET_ID,
-        configuration: JSON.stringify({ country, hour, minute }),
-        cronJobId,
+        configuration: JSON.stringify({ accountId, teamId }),
         identifier,
+        providerAccessToken,
         userId
       });
-      req.flash(
-        'success',
-        'You just subscribed to COVID 19 report applet. Nice!'
-      );
+      req.flash('success', 'You are subscribed to Dropbox watcher! Great!');
       res.redirect('/');
     } catch (err) {
       next(err);
@@ -63,23 +59,20 @@ router.post(
 );
 
 router.post(
-  '/applets/covid19-report/unsubscribe/:identifier',
+  '/applets/dropbox-watcher/unsubscribe/:identifier',
   ensureLoggedIn,
   async (req, res, next) => {
     try {
       const { id: userId } = req.user;
       const { identifier } = req.params;
-      const {
-        cronJobId
-      } = await userAppletsRepo.findUserAppletByIdentifierAndUserId({
+      await userAppletsRepo.findUserAppletByIdentifierAndUserId({
         identifier,
         userId
       });
-      await cronJobRepo.deleteCronJobById(cronJobId);
       await userAppletsRepo.deleteUserAppletByIdentifier(identifier);
       req.flash(
         'success',
-        'You just unsubscribed to COVID 19 report applet. Too bad!'
+        'You just unsubscribed to Dropbox watcher applet. Too bad!'
       );
       res.redirect('/');
     } catch (err) {

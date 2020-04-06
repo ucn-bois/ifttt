@@ -13,7 +13,6 @@ const getApplets = async userId =>
       'applets.name',
       'applets.description',
       'applets.homepage',
-      'applets.providerId',
       db.raw(`case when userApplets.userId then 1 else 0 end as subscribed`)
     );
 
