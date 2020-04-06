@@ -2,12 +2,11 @@ const axios = require('axios');
 const qs = require('querystring');
 
 const APPLET_ID = 2;
-const REDIRECT_URI = 'http://127.0.0.1:8000/applets/dropbox-watcher/subscribe';
 const AUTH_URL = [
   'https://www.dropbox.com/oauth2/authorize',
   `?client_id=${process.env.APPLET_DROPBOX_WATCHER_APP_ID}`,
   '&response_type=code',
-  `&redirect_uri=${REDIRECT_URI}`
+  `&redirect_uri=${process.env.APPLET_DROPBOX_WATCHER_REDIRECT_URI}`
 ].join('');
 
 const exchangeCodeForAccessToken = async code => {
@@ -16,7 +15,7 @@ const exchangeCodeForAccessToken = async code => {
     qs.stringify({
       code,
       grant_type: 'authorization_code',
-      redirect_uri: REDIRECT_URI
+      redirect_uri: process.env.APPLET_DROPBOX_WATCHER_REDIRECT_URI
     }),
     {
       headers: {
