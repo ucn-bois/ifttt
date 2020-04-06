@@ -8,15 +8,7 @@ const fetchAndProcessCovid19Data = async country => {
   if (!response.data[country]) {
     throw createError(400, 'No such country.');
   }
-  return response.data[country].reduce(
-    (acc, { confirmed, deaths, recovered }) => {
-      acc.confirmed += confirmed;
-      acc.deaths += deaths;
-      acc.recovered += recovered;
-      return acc;
-    },
-    { confirmed: 0, deaths: 0, recovered: 0 }
-  );
+  return response.data[country].pop();
 };
 
 module.exports = {

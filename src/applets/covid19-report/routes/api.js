@@ -21,7 +21,7 @@ router.post(
         to: email,
         from: process.env.SG_FROM_EMAIL,
         templateId: 'd-fc4584e586c546f794ff92eef1f4759d',
-        dynamic_template_data: { ...data }
+        dynamic_template_data: { country, ...data }
       });
     } catch (err) {
       next(err);
