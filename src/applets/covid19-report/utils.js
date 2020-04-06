@@ -1,8 +1,8 @@
 const axios = require('axios');
 const createError = require('http-errors');
 
-const fetchAndProcessCovid19Data = country => {
-  const response = axios.get(
+const fetchAndProcessCovid19Data = async country => {
+  const response = await axios.get(
     'https://pomber.github.io/covid19/timeseries.json'
   );
   if (!response.data[country]) {
