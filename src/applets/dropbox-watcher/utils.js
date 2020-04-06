@@ -1,6 +1,8 @@
 const axios = require('axios');
 const qs = require('querystring');
 
+const { db } = require('../../clients');
+
 const APPLET_ID = 2;
 const AUTH_URL = [
   'https://www.dropbox.com/oauth2/authorize',
