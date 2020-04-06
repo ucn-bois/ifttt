@@ -47,6 +47,5 @@ module.exports = {
   APPLET_ID,
   AUTH_URL,
   exchangeCodeForAccessToken,
-  queryUserEmailsByDropboxAccountId,
-  REDIRECT_URI
+  queryUserEmailsByDropboxAccountId
 };
