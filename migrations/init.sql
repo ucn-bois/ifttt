@@ -16,6 +16,62 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `applets`
+--
+
+DROP TABLE IF EXISTS `applets`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `applets` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `homepage` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `providerId` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `applets_path_uindex` (`homepage`),
+  KEY `applets_providers_id_fk` (`providerId`),
+  CONSTRAINT `applets_providers_id_fk` FOREIGN KEY (`providerId`) REFERENCES `providers` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `applets`
+--
+
+LOCK TABLES `applets` WRITE;
+/*!40000 ALTER TABLE `applets` DISABLE KEYS */;
+INSERT INTO `applets` VALUES (1,'COVID19 Report','Get the latest statistics of COVID19 in country of your choice ','/applets/covid19-report',NULL);
+/*!40000 ALTER TABLE `applets` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `passwordResets`
+--
+
+DROP TABLE IF EXISTS `passwordResets`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `passwordResets` (
+  `userId` int(11) NOT NULL,
+  `pending` tinyint(1) NOT NULL DEFAULT 1,
+  `identifier` char(64) COLLATE utf8mb4_unicode_ci NOT NULL,
+  UNIQUE KEY `passwordResets_identifier_uindex` (`identifier`),
+  KEY `passwordResets_users_id_fk` (`userId`),
+  CONSTRAINT `passwordResets_users_id_fk` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `passwordResets`
+--
+
+LOCK TABLES `passwordResets` WRITE;
+/*!40000 ALTER TABLE `passwordResets` DISABLE KEYS */;
+/*!40000 ALTER TABLE `passwordResets` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `providers`
 --
 
@@ -40,6 +96,38 @@ LOCK TABLES `providers` WRITE;
 /*!40000 ALTER TABLE `providers` DISABLE KEYS */;
 INSERT INTO `providers` VALUES (1,'dropbox','https://www.dropbox.com/oauth2/authorize?client_id=awfobs54uj95nyg&response_type=code&redirect_uri=http://localhost:8000/providers/dropbox/authorize'),(2,'github','https://github.com/login/oauth/authorize?client_id=e9b830cdbeb4478ef0c2&redirect_uri=http://localhost:8000/providers/github/authorize');
 /*!40000 ALTER TABLE `providers` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `userApplets`
+--
+
+DROP TABLE IF EXISTS `userApplets`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `userApplets` (
+  `userId` int(11) NOT NULL,
+  `appletId` int(11) NOT NULL,
+  `identifier` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `configuration` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `cronJobId` int(11) DEFAULT NULL,
+  UNIQUE KEY `userApplets_identifier_uindex` (`identifier`),
+  UNIQUE KEY `userApplets_userId_appletId_uindex` (`userId`,`appletId`),
+  UNIQUE KEY `userApplets_cronJobId_uindex` (`cronJobId`),
+  KEY `userApplets_applets_id_fk` (`appletId`),
+  CONSTRAINT `userApplets_applets_id_fk` FOREIGN KEY (`appletId`) REFERENCES `applets` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `userApplets_users_id_fk` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `configuration` CHECK (json_valid(`configuration`))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `userApplets`
+--
+
+LOCK TABLES `userApplets` WRITE;
+/*!40000 ALTER TABLE `userApplets` DISABLE KEYS */;
+/*!40000 ALTER TABLE `userApplets` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -71,6 +159,32 @@ LOCK TABLES `userProviders` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `userVerifications`
+--
+
+DROP TABLE IF EXISTS `userVerifications`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `userVerifications` (
+  `userId` int(11) NOT NULL,
+  `pending` tinyint(1) NOT NULL DEFAULT 1,
+  `identifier` char(64) COLLATE utf8mb4_unicode_ci NOT NULL,
+  UNIQUE KEY `accountVerifications_identifier_uindex` (`identifier`),
+  KEY `accountVerifications_users_id_fk` (`userId`),
+  CONSTRAINT `accountVerifications_users_id_fk` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `userVerifications`
+--
+
+LOCK TABLES `userVerifications` WRITE;
+/*!40000 ALTER TABLE `userVerifications` DISABLE KEYS */;
+/*!40000 ALTER TABLE `userVerifications` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `users`
 --
 
@@ -86,7 +200,7 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_email_uindex` (`email`),
   UNIQUE KEY `users_username_uindex` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -95,10 +209,11 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (17,'marovargovcik','vargovcik.marek@gmail.com','$2b$06$Tr1NLTeRmO22w1ehlBEyq.Iedilb35Hryz2V4mJJNS5OT.Jt1ehUe',1);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
-
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
@@ -107,4 +222,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-04-05 14:01:49
+-- Dump completed on 2020-04-06 16:15:30
