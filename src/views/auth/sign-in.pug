@@ -1,7 +1,7 @@
 extends ../base
 
 block content
-  form(action='/sign-in', method='POST')
+  form(action='/auth/sign-in', method='POST')
     input(type='hidden', name='_csrf', value=csrfToken)
     label(for='username') Username
     input#username(type='text', name='username', required)
@@ -11,6 +11,6 @@ block content
   p No account yet?
     |
     |
-    a(href='/sign-up') Register now
+    a(href='/auth/sign-up') Register now
   p
-    a(href='/forgotten-password') Forgot your password?
+    a(href='/auth/forgotten-password') Forgot your password?

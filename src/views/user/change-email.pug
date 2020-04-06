@@ -2,7 +2,7 @@ extends ../base
 
 block content
   h1 Change email
-  form(action=`/change-email`, method='POST')
+  form(action=`/user/change-email`, method='POST')
     input(type='hidden', name='_csrf', value=csrfToken)
     label(for='newEmail') New email
     input#newEmail(type='text', name='newEmail', required)

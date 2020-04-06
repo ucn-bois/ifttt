@@ -16,31 +16,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `actions`
---
-
-DROP TABLE IF EXISTS `actions`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `actions` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(64) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `actions_name_uindex` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `actions`
---
-
-LOCK TABLES `actions` WRITE;
-/*!40000 ALTER TABLE `actions` DISABLE KEYS */;
-INSERT INTO `actions` VALUES (2,'email-verification'),(1,'forgot-password');
-/*!40000 ALTER TABLE `actions` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `providers`
 --
 
@@ -93,35 +68,6 @@ CREATE TABLE `userProviders` (
 LOCK TABLES `userProviders` WRITE;
 /*!40000 ALTER TABLE `userProviders` DISABLE KEYS */;
 /*!40000 ALTER TABLE `userProviders` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `userRequests`
---
-
-DROP TABLE IF EXISTS `userRequests`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `userRequests` (
-  `userId` int(11) NOT NULL,
-  `actionId` int(11) NOT NULL,
-  `token` char(32) NOT NULL,
-  `isUsed` tinyint(1) NOT NULL DEFAULT 0,
-  UNIQUE KEY `userRequests_token_uindex` (`token`),
-  KEY `userRequests_actions_id_fk` (`actionId`),
-  KEY `userRequests_users_id_fk` (`userId`),
-  CONSTRAINT `userRequests_actions_id_fk` FOREIGN KEY (`actionId`) REFERENCES `actions` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `userRequests_users_id_fk` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `userRequests`
---
-
-LOCK TABLES `userRequests` WRITE;
-/*!40000 ALTER TABLE `userRequests` DISABLE KEYS */;
-/*!40000 ALTER TABLE `userRequests` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
