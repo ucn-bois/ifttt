@@ -10,7 +10,6 @@ router.get('/', ensureLoggedIn, async (req, res, next) => {
       res.render('pages/user-not-verified');
     }
     const applets = await appletsRepo.getApplets(userId);
-    console.log(applets);
     res.render('pages/home', {
       applets: applets
     });

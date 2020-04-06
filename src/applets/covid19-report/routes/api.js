@@ -13,7 +13,7 @@ router.post(
       const {
         configuration,
         userId
-      } = userAppletsRepo.findUserAppletByIdentifier(identifier);
+      } = await userAppletsRepo.findUserAppletByIdentifier(identifier);
       const { email } = await usersRepo.findUserById(userId);
       const { country } = JSON.parse(configuration);
       const data = await fetchAndProcessCovid19Data(country);
