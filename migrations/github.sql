@@ -1,0 +1,1 @@
+INSERT INTO `applets` VALUES (3,'GitHub Watcher','Get an email whenever there is a commit pushed to a remote repository of you choice','/applets/github-watcher')
