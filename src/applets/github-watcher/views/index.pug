@@ -1,0 +1,13 @@
+extends ../../../views/base
+
+block content
+    h1 This is the GitHub watcher applet
+    if userApplet
+        form(
+            action=`/applets/dropbox-watcher/unsubscribe/${userApplet.identifier}`,
+            method='POST'
+        )
+            input(type='hidden', name='_csrf', value=csrfToken)
+            button(type='submit') Unsubscribe
+    else
+        a(href=AUTH_URL) Subscribe
