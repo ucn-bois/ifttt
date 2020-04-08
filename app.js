@@ -55,6 +55,7 @@ app.use(passport.session());
 // API
 app.use(require('./src/applets/covid19-report/routes/api'));
 app.use(require('./src/applets/dropbox-watcher/routes/api'));
+app.use(require('./src/applets/github-watcher/routes/api'));
 
 // Enforce CSRF protection
 app.use(csrf({ cookie: true }));
@@ -70,6 +71,7 @@ app.use(require('./src/routes/auth'));
 // Applets
 app.use(require('./src/applets/covid19-report/routes'));
 app.use(require('./src/applets/dropbox-watcher/routes'));
+app.use(require('./src/applets/github-watcher/routes'));
 
 // 404 Handler
 app.use((req, res, next) => {
