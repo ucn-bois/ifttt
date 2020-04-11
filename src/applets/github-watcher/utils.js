@@ -111,7 +111,9 @@ const sendMail = async ({ identifier, body }) => {
       templateId: 'd-a451c67c185f447eb905fe85055dc003',
       dynamic_template_data: {
         committer: body.head_commit.committer.username,
-        repository: body.repository.full_name
+        repository: body.repository.full_name,
+        repository_url: body.repository.html_url,
+        head_commit_link: body.head_commit.url
       }
     });
   } else {
