@@ -11,6 +11,7 @@ const SCOPES = 'repo';
 const CLIENT_ID = process.env.APPLET_GITHUB_WATCHER_APP_ID;
 const CLIENT_SECRET = process.env.APPLET_GITHUB_WATCHER_APP_SECRET;
 const REDIRECT_URI = process.env.APPLET_GITHUB_WATCHER_REDIRECT_URI;
+const WEBHOOK_URI = process.env.APPLET_GITHUB_WATCHER_WEBHOOK_URI;
 const AUTH_URL = [
   'https://github.com/login/oauth/authorize/',
   `?client_id=${CLIENT_ID}`,
@@ -57,7 +58,7 @@ const createWebhook = async ({
         active: true,
         events: ['push'],
         config: {
-          url: `https://704ae309.ngrok.io/api/applets/github-watcher/webhook/${identifier}`, // TODO change uri
+          url: `${WEBHOOK_URI}/${identifier}`,
           content_type: 'json',
           insecure_ssl: '0'
         }
