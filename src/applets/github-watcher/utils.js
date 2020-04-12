@@ -40,7 +40,6 @@ const exchangeCodeForAccessToken = async code => {
   } catch (err) {
     throw createError(500, err);
   }
-  console.log(`GitHub access token received: ${JSON.stringify(response.data)}`);
   return response.data;
 };
 
