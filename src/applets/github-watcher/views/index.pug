@@ -3,6 +3,7 @@ extends ../../../views/base
 block content
   h1 This is the GitHub watcher applet
   if userApplet
+    p You are currently listening for changes on #{appletConfig.repository}
     form(
       action=`/applets/github-watcher/unsubscribe/${userApplet.identifier}`,
       method='POST'

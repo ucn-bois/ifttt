@@ -28,7 +28,8 @@ router.get(
         // Do nothing? Okay.
       }
       res.render('github-watcher/views/index', {
-        userApplet
+        userApplet,
+        appletConfig: JSON.parse(userApplet.configuration)
       });
     } catch (err) {
       next(err);
