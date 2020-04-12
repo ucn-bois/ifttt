@@ -1,7 +1,9 @@
 const router = require('express').Router();
 
 const { sg } = require('../../../clients');
-const { fetchAndProcessCovid19Data } = require('../utils');
+const {
+  fetchAndProcessCovid19Data
+} = require('../../shared/covid19-report/utils');
 const usersRepo = require('../../../repositories/users');
 const userAppletsRepo = require('../../../repositories/userApplets');
 
