@@ -117,6 +117,11 @@ router.post(
       await removeWebhook(url);
       await cronJobRepo.deleteCronJobById(cronJobId);
       await userAppletsRepo.deleteUserAppletByIdentifier(identifier);
+      req.flash(
+        'success',
+        'You just unsubscribed from COVID-19 Discord report!'
+      );
+      res.redirect('/');
     } catch (err) {
       next(err);
     }
