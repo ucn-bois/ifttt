@@ -61,7 +61,7 @@ const sendDiscordMessage = async ({ url, content }) => {
 };
 
 const removeWebhook = async url => {
-  await axios.delete();
+  await axios.delete(url);
 };
 
 module.exports = {
