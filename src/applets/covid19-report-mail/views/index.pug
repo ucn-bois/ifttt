@@ -1,16 +1,16 @@
 extends ../../../views/base
 
 block content
-  h1 This is COVID19 Report applet
+  h1 This is the COVID19 Report applet for mail
   if userApplet
     form(
-      action=`/applets/covid19-report/unsubscribe/${userApplet.identifier}`,
+      action=`/applets/covid19-report-mail/unsubscribe/${userApplet.identifier}`,
       method='POST'
     )
       input(type='hidden', name='_csrf', value=csrfToken)
       button(type='submit') Unsubscribe
   else
-    form(action='/applets/covid19-report/subscribe', method='POST')
+    form(action='/applets/covid19-report-mail/subscribe', method='POST')
       input(type='hidden', name='_csrf', value=csrfToken)
       label(for='hour') Hour
       input#hour(type='number', name='hour', max=24, min=0, required)

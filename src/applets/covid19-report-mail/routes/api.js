@@ -8,7 +8,7 @@ const usersRepo = require('../../../repositories/users');
 const userAppletsRepo = require('../../../repositories/userApplets');
 
 router.post(
-  '/api/applets/covid19-report/execute/:identifier',
+  '/api/applets/covid19-report-mail/execute/:identifier',
   async (req, res, next) => {
     try {
       const { identifier } = req.params;

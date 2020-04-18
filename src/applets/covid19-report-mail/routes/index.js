@@ -8,7 +8,7 @@ const userAppletsRepo = require('../../../repositories/userApplets');
 const APPLET_ID = 1;
 
 router.get(
-  '/applets/covid19-report',
+  '/applets/covid19-report-mail',
   ensureLoggedIn,
   async (req, res, next) => {
     try {
@@ -22,7 +22,7 @@ router.get(
       } catch (err) {
         // Do nothing. Continue.
       }
-      res.render('covid19-report/views/index', {
+      res.render('covid19-report-mail/views/index', {
         userApplet
       });
     } catch (err) {
@@ -32,7 +32,7 @@ router.get(
 );
 
 router.post(
-  '/applets/covid19-report/subscribe',
+  '/applets/covid19-report-mail/subscribe',
   ensureLoggedIn,
   async (req, res, next) => {
     try {
@@ -62,7 +62,7 @@ router.post(
 );
 
 router.post(
-  '/applets/covid19-report/unsubscribe/:identifier',
+  '/applets/covid19-report-mail/unsubscribe/:identifier',
   ensureLoggedIn,
   async (req, res, next) => {
     try {
