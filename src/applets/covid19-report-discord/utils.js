@@ -60,10 +60,15 @@ const sendDiscordMessage = async ({ url, content }) => {
   });
 };
 
+const removeWebhook = async url => {
+  await axios.delete();
+};
+
 module.exports = {
   APPLET_ID,
   AUTH_URL,
   getAccessToken,
   revokeToken,
-  sendDiscordMessage
+  sendDiscordMessage,
+  removeWebhook
 };

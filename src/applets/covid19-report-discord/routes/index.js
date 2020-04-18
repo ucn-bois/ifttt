@@ -6,7 +6,8 @@ const {
   APPLET_ID,
   AUTH_URL,
   getAccessToken,
-  revokeToken
+  revokeToken,
+  removeWebhook
 } = require('../utils');
 const userAppletsRepo = require('../../../repositories/userApplets');
 const cronJobRepo = require('../../../repositories/cronJob');
@@ -106,7 +107,18 @@ router.get(
 router.post(
   '/applets/covid19-report-discord/unsubscribe/:identifier',
   ensureLoggedIn,
-  async (req, res, next) => {}
+  async (req, res, next) => {
+    try {
+      const { identifier } = req.params;
+      const userApplet = userAppletsRepo.findUserAppletByIdentifier(identifier);
+      const { url, cronJobId } = JSON.parse(userApplet.configuration);
+      await removeWebhook(url);
+      await cronJobRepo.deleteCronJobById(cronJobId);
+      await userAppletsRepo.deleteUserAppletByIdentifier(identifier);
+    } catch (err) {
+      next(err);
+    }
+  }
 );
 
 module.exports = router;
