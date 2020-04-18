@@ -1,52 +1,40 @@
 const createError = require('http-errors');
 
-const userRequestRepository = require('./userRequests');
-
 const { db } = require('../clients');
 
-const changeUserPassword = async (id, password) => {
+const changeEmail = async ({ newEmail, userId }) =>
   await db('users')
     .where({
-      id
+      id: userId
     })
     .update({
-      password
+      email: newEmail,
+      isVerified: false
+    });
+
+const changePassword = async ({ newHashedPassword, userId }) => {
+  await db('users')
+    .where({
+      id: userId
+    })
+    .update({
+      password: newHashedPassword
     });
 };
 
-const changeUserEmail = async (id, email) => {
-  await db('users')
-    .where({
-      id
-    })
-    .update({
-      email
-    });
-};
-
-const createUser = async (username, email, password) => {
+const createUser = async ({ email, hashedPassword, username }) =>
   await db('users').insert({
-    username,
     email,
-    password
+    password: hashedPassword,
+    username
   });
-};
 
-const deserializeUser = async (id, done) => {
-  try {
-    const user = await findUserById(id);
-    done(null, user);
-  } catch (err) {
-    done(err);
-  }
-};
-
-const findUserById = async id => {
+const findUserById = async userId => {
   const user = await db('users')
-    .where({ id })
+    .where({ id: userId })
     .first();
   if (!user) {
-    throw createError(404, `User with id ${id} does not exist.`);
+    throw createError(404, `User with id ${userId} does not exist.`);
   }
   return user;
 };
@@ -61,32 +49,22 @@ const findUserByUsername = async username => {
   return user;
 };
 
-const serializeUser = (user, done) => done(null, user.id);
-
-const verifyUser = async token => {
-  const {
-    userId,
-    actionId
-  } = await userRequestRepository.findUserRequestByToken(token);
-  if (actionId !== 2) {
-    throw createError(
-      400,
-      'Token provided does not serve for user verification.'
-    );
-  }
-  await userRequestRepository.invalidateUserRequest(token);
+const verifyUser = async userId =>
   await db('users')
     .where({ id: userId })
     .update({ isVerified: true });
-};
+
+const unverifyUser = async userId =>
+  await db('users')
+    .where({ id: userId })
+    .update({ isVerified: false });
 
 module.exports = {
-  changeUserPassword,
-  changeUserEmail,
+  changeEmail,
+  changePassword,
   createUser,
-  deserializeUser,
   findUserById,
   findUserByUsername,
-  serializeUser,
-  verifyUser
+  verifyUser,
+  unverifyUser
 };

@@ -1,0 +1,16 @@
+extends ../base
+
+block content
+  form(action='/auth/sign-in', method='POST')
+    input(type='hidden', name='_csrf', value=csrfToken)
+    label(for='username') Username
+    input#username(type='text', name='username', required)
+    label(for='password') Password
+    input#password(type='password', name='password', required)
+    button(type='submit') Login
+  p No account yet?
+    |
+    |
+    a(href='/auth/sign-up') Register now
+  p
+    a(href='/auth/forgotten-password') Forgot your password?

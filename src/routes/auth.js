@@ -1,38 +1,110 @@
-const passport = require('passport');
 const router = require('express').Router();
-const signOutRequired = require('connect-ensure-login').ensureLoggedOut;
-const signInRequired = require('connect-ensure-login').ensureLoggedIn;
+const passport = require('passport');
 
-const authRepository = require('../repositories/auth');
-const usersRepository = require('../repositories/users');
-const userRequestsRepository = require('../repositories/userRequests');
+const { ensureLoggedIn, ensureLoggedOut } = require('../utils');
+const authRepo = require('../repositories/auth');
+const usersRepo = require('../repositories/users');
+const userVerificationsRepo = require('../repositories/userVerifications');
+const passwordResetsRepo = require('../repositories/passwordResets');
 
-router.get('/sign-in', signOutRequired('/'), (req, res) => {
-  res.render('pages/sign-in');
+/**
+ * [GET] Sign in
+ */
+router.get('/auth/sign-in', ensureLoggedOut, (req, res) => {
+  res.render('auth/sign-in');
 });
 
-router.get('/sign-up', signOutRequired('/'), (req, res) => {
-  res.render('pages/sign-up');
+/**
+ * [POST] Sign in
+ */
+router.post(
+  '/auth/sign-in',
+  ensureLoggedOut,
+  passport.authenticate('local', {
+    successRedirect: '/',
+    failureRedirect: '/auth/sign-in'
+  })
+);
+
+/**
+ * [GET] Sign up
+ */
+router.get('/auth/sign-up', ensureLoggedOut, (req, res) =>
+  res.render('auth/sign-up')
+);
+
+/**
+ * [POST] Sign up
+ */
+router.post('/auth/sign-up', ensureLoggedOut, async (req, res, next) => {
+  try {
+    const { email, plainPassword, repeatedPlainPassword, username } = req.body;
+    authRepo.comparePlainPasswords({
+      plainPassword,
+      repeatedPlainPassword
+    });
+    await usersRepo.createUser({
+      email,
+      hashedPassword: await authRepo.hashPassword(plainPassword),
+      username
+    });
+    const { id: userId } = await usersRepo.findUserByUsername(username);
+    await userVerificationsRepo.createUserVerification({ email, userId });
+    res.redirect('/auth/sign-in');
+  } catch (err) {
+    next(err);
+  }
 });
 
-router.get('/sign-out', signInRequired('/sign-in'), (req, res, next) => {
+/**
+ * [GET] Sign out
+ */
+router.get('/auth/sign-out', ensureLoggedIn, (req, res) => {
   req.logout();
-  res.redirect('/sign-in');
+  res.redirect('/auth/sign-in');
 });
 
-router.get('/forgotten-password', signOutRequired('/'), (req, res) => {
-  res.render('pages/forgotten-password');
+/**
+ * [GET] Forgotten password
+ */
+router.get('/auth/forgotten-password', ensureLoggedOut, (req, res) => {
+  res.render('auth/forgotten-password');
 });
 
-router.get(
-  '/reset-password/:token',
-  signOutRequired('/'),
+/**
+ * [POST] Forgotten password
+ */
+router.post(
+  '/auth/forgotten-password',
+  ensureLoggedOut,
   async (req, res, next) => {
     try {
-      const { token } = req.params;
-      await userRequestsRepository.findUserRequestByToken(token);
-      res.render('pages/reset-password', {
-        token
+      const { username } = req.body;
+      const { id: userId, email } = await usersRepo.findUserByUsername(
+        username
+      );
+      await passwordResetsRepo.createPasswordReset({ email, userId });
+      req.flash('success', 'Check your email!');
+      res.redirect('/auth/sign-in');
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+/**
+ * [GET] Reset password
+ * @params: Identifier
+ */
+router.get(
+  '/auth/reset-password/:identifier',
+  ensureLoggedOut,
+  async (req, res, next) => {
+    try {
+      const { identifier } = req.params;
+      await passwordResetsRepo.findPasswordResetByIdentifier(identifier);
+      res.render('auth/reset-password', {
+        identifier
       });
     } catch (err) {
       next(err);
@@ -40,105 +112,31 @@ router.get(
   }
 );
 
-router.get('/change-password', signInRequired('/sign-in'), (req, res) => {
-  res.render('pages/change-password');
-});
-
-router.get('/change-email', signInRequired('/sign-in'), (req, res) => {
-  res.render('pages/change-email');
-});
-
-router.get('/verify-email/:token', async (req, res, next) => {
-  try {
-    const { token } = req.params;
-    await usersRepository.verifyUser(token);
-    req.flash('success', 'Your account is now verified!');
-    res.redirect('/');
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.post('/sign-up', signOutRequired('/'), async (req, res, next) => {
-  try {
-    await authRepository.signUp(req.body);
-    res.redirect('/sign-in');
-  } catch (err) {
-    next(err);
-  }
-});
-
+/**
+ * [POST] Reset password
+ * @params: identifier
+ */
 router.post(
-  '/sign-in',
-  signOutRequired('/'),
-  passport.authenticate('local', {
-    successRedirect: '/',
-    failureRedirect: '/sign-in'
-  })
-);
-
-router.post(
-  '/forgotten-password',
-  signOutRequired('/'),
+  '/auth/reset-password/:identifier',
+  ensureLoggedOut,
   async (req, res, next) => {
     try {
-      await authRepository.createResetPasswordRequest(req.body.username);
-      req.flash('success', 'Check your email!');
-      res.redirect('/sign-in');
-    } catch (err) {
-      next(err);
-    }
-  }
-);
-
-router.post(
-  '/reset-password/:token',
-  signOutRequired('/'),
-  async (req, res, next) => {
-    try {
-      const { token } = req.params;
-      const { password, repeatedPassword } = req.body;
-      await authRepository.resetUserPassword(token, password, repeatedPassword);
-      req.flash('success', 'You can now sign in!');
-      res.redirect('/sign-in');
-    } catch (err) {
-      next(err);
-    }
-  }
-);
-
-router.post(
-  '/change-password',
-  signInRequired('/sign-in'),
-  async (req, res, next) => {
-    try {
-      const { id: userId, password } = req.user;
-      const { oldPassword, newPassword, repeatedNewPassword } = req.body;
-      await authRepository.changePassword(
-        userId,
-        password,
-        oldPassword,
-        newPassword,
-        repeatedNewPassword
+      const { identifier } = req.params;
+      const { plainPassword, repeatedPlainPassword } = req.body;
+      const { userId } = await passwordResetsRepo.findPasswordResetByIdentifier(
+        identifier
       );
-      req.flash(`success`, `Password successfully changed.`);
-      res.redirect('/');
-    } catch (err) {
-      next(err);
-    }
-  }
-);
-
-router.post(
-  '/change-email',
-  signInRequired('/sign-in'),
-  async (req, res, next) => {
-    try {
-      const { id: userId, email } = req.user;
-      const { newEmail } = req.body;
-      await authRepository.changeEmail(userId, email, newEmail);
-      req.flash(`success`, `Email successfully changed`);
-      res.redirect('/');
+      await authRepo.comparePlainPasswords({
+        plainPassword,
+        repeatedPlainPassword
+      });
+      await usersRepo.changePassword({
+        newHashedPassword: await authRepo.hashPassword(plainPassword),
+        userId
+      });
+      await passwordResetsRepo.invalidatePasswordReset(identifier);
+      req.flash('success', 'You can now sign in!');
+      res.redirect('/auth/sign-in');
     } catch (err) {
       next(err);
     }

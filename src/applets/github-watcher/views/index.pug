@@ -1,0 +1,24 @@
+extends ../../../views/base
+
+block content
+  h1 This is the GitHub watcher applet
+  if userApplet
+    p You are currently listening for changes on #{appletConfig.repository}
+    form(
+      action=`/applets/github-watcher/unsubscribe/${userApplet.identifier}`,
+      method='POST'
+    )
+      input(type='hidden', name='_csrf', value=csrfToken)
+      input(
+        type='hidden',
+        name='providerAccessToken',
+        value=userApplet.providerAccessToken
+      )
+      input(type='hidden', name='config', value=userApplet.configuration)
+      button(type='submit') Unsubscribe
+  else
+    form(action=`/applets/github-watcher/authorize/`, method='POST')
+      input(type='hidden', name='_csrf', value=csrfToken)
+      label(for='repository', required) Repository
+      input#repository(type='text', name='repository', required)
+      button(type='submit') Subscribe

@@ -14,8 +14,11 @@ const redis = require('redis');
 const session = require('express-session');
 const RedisStore = require('connect-redis')(session);
 
-const { PassportLocalStrategy } = require('./src/repositories/auth');
-const { deserializeUser, serializeUser } = require('./src/repositories/users');
+const {
+  deserializeUser,
+  PassportLocalStrategy,
+  serializeUser
+} = require('./src/repositories/passport');
 
 passport.use(PassportLocalStrategy);
 passport.deserializeUser(deserializeUser);
@@ -25,7 +28,10 @@ const app = express();
 const redisClient = redis.createClient();
 
 app.set('trust proxy', true);
-app.set('views', path.join(__dirname, 'src/views'));
+app.set('views', [
+  path.join(__dirname, 'src/views'),
+  path.join(__dirname, 'src/applets')
+]);
 app.set('view engine', 'pug');
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
@@ -47,7 +53,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // API
-app.use(require('./src/routes/api'));
+app.use(require('./src/applets/covid19-report/routes/api'));
+app.use(require('./src/applets/dropbox-watcher/routes/api'));
+app.use(require('./src/applets/github-watcher/routes/api'));
 
 // Enforce CSRF protection
 app.use(csrf({ cookie: true }));
@@ -57,9 +65,13 @@ app.use(require('./src/middlewares/base'));
 
 // Routes
 app.use(require('./src/routes/home'));
+app.use(require('./src/routes/user'));
 app.use(require('./src/routes/auth'));
-app.use(require('./src/routes/applets'));
-app.use(require('./src/routes/providers'));
+
+// Applets
+app.use(require('./src/applets/covid19-report/routes'));
+app.use(require('./src/applets/dropbox-watcher/routes'));
+app.use(require('./src/applets/github-watcher/routes'));
 
 // 404 Handler
 app.use((req, res, next) => {

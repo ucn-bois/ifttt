@@ -1,0 +1,19 @@
+extends ../base
+
+block content
+  form(action='/auth/sign-up', method='POST')
+    input(type='hidden', name='_csrf', value=csrfToken)
+    label(for='username') Username
+    input#username(type='text', name='username', required)
+    label(for='email') Email
+    input#email(type='email', name='email', required)
+    label(for='plainPassword') Password
+    input#plainPassword(type='password', name='plainPassword', required)
+    label(for='repeatedPlainPassword') Repeat password
+    input#repeatedPlainPassword(
+      type='password',
+      name='repeatedPlainPassword',
+      required
+    )
+    button(type='submit') Sign up
+  a(href='/auth/sign-in') Go back to login
