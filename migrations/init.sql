@@ -38,7 +38,7 @@ CREATE TABLE `applets` (
 
 LOCK TABLES `applets` WRITE;
 /*!40000 ALTER TABLE `applets` DISABLE KEYS */;
-INSERT INTO `applets` VALUES (1,'COVID19 Report','Get the latest statistics of COVID19 in country of your choice ','/applets/covid19-report'),(2,'Dropbox Watcher','Get email whenever there is update on your own Dropbox space','/applets/dropbox-watcher');
+INSERT INTO `applets` VALUES (1,'COVID19 Report','Get the latest statistics of COVID19 in country of your choice ','/applets/covid19-report'),(2,'Dropbox Watcher','Get email whenever there is update on your own Dropbox space','/applets/dropbox-watcher'),(3,'GitHub Watcher','Get an email whenever there is a commit pushed to a remote repository of you choice','/applets/github-watcher');
 /*!40000 ALTER TABLE `applets` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -80,17 +80,12 @@ CREATE TABLE `userApplets` (
   `appletId` int(11) NOT NULL,
   `identifier` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
   `configuration` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
-  `cronJobId` int(11) DEFAULT NULL,
-  `providerAccessToken` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   UNIQUE KEY `userApplets_identifier_uindex` (`identifier`),
   UNIQUE KEY `userApplets_userId_appletId_uindex` (`userId`,`appletId`),
-  UNIQUE KEY `userApplets_cronJobId_uindex` (`cronJobId`),
-  UNIQUE KEY `userApplets_providerAccessToken_uindex` (`providerAccessToken`),
   KEY `userApplets_applets_id_fk` (`appletId`),
   CONSTRAINT `userApplets_applets_id_fk` FOREIGN KEY (`appletId`) REFERENCES `applets` (`id`) ON DELETE CASCADE,
   CONSTRAINT `userApplets_users_id_fk` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `configuration` CHECK (json_valid(`configuration`)),
-  CONSTRAINT `providerAccessToken_or_cronJobId_not_null` CHECK (`cronJobId` is not null and `providerAccessToken` is null or `cronJobId` is null and `providerAccessToken` is not null)
+  CONSTRAINT `configuration` CHECK (json_valid(`configuration`))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

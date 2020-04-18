@@ -46,8 +46,7 @@ router.post(
       });
       await userAppletsRepo.createUserApplet({
         appletId: APPLET_ID,
-        configuration: JSON.stringify({ country, hour, minute }),
-        cronJobId,
+        configuration: JSON.stringify({ country, cronJobId, hour, minute }),
         identifier,
         userId
       });
@@ -70,11 +69,12 @@ router.post(
       const { id: userId } = req.user;
       const { identifier } = req.params;
       const {
-        cronJobId
+        configuration
       } = await userAppletsRepo.findUserAppletByIdentifierAndUserId({
         identifier,
         userId
       });
+      const { cronJobId } = JSON.parse(configuration);
       await cronJobRepo.deleteCronJobById(cronJobId);
       await userAppletsRepo.deleteUserAppletByIdentifier(identifier);
       req.flash(

@@ -5,17 +5,13 @@ const { db } = require('../clients');
 const createUserApplet = async ({
   appletId,
   configuration,
-  cronJobId,
   identifier,
-  providerAccessToken,
   userId
 }) =>
   await db('userApplets').insert({
     appletId,
     configuration,
-    cronJobId,
     identifier,
-    providerAccessToken,
     userId
   });
 

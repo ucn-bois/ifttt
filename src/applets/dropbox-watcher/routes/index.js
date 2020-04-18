@@ -45,9 +45,12 @@ router.get(
       } = await exchangeCodeForAccessToken(code);
       await userAppletsRepo.createUserApplet({
         appletId: APPLET_ID,
-        configuration: JSON.stringify({ accountId, teamId }),
+        configuration: JSON.stringify({
+          accountId,
+          providerAccessToken,
+          teamId
+        }),
         identifier,
-        providerAccessToken,
         userId
       });
       req.flash('success', 'You are subscribed to Dropbox watcher! Great!');
