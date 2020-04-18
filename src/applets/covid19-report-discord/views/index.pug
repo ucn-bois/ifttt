@@ -1,0 +1,21 @@
+extends ../../../views/base
+
+block content
+  h1 Discord applet
+  if userApplet
+    form(
+      action=`/applets/covid19-report-discord/unsubscribe/${userApplet.identifier}`,
+      method='POST'
+    )
+      input(type='hidden', name='_csrf', value=csrfToken)
+      button(type='submit') Unsubscribe
+  else
+    form(action='/applets/covid19-report-discord/authorize', method='POST')
+      input(type='hidden', name='_csrf', value=csrfToken)
+      label(for='hour') Hour
+      input#hour(type='number', name='hour', max=24, min=0, required)
+      label(for='minute') Minute
+      input#minute(type='number', name='minute', max=60, min=0, required)
+      label(for='country') Country
+      input#country(type='text', name='country', required)
+      button(type='submit') Subscribe
