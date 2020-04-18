@@ -43,11 +43,7 @@ const exchangeCodeForAccessToken = async code => {
   return response.data;
 };
 
-const createWebhook = async ({
-  repository,
-  providerAccessToken,
-  identifier
-}) => {
+const createWebhook = async ({ repository, accessToken, identifier }) => {
   let response;
   try {
     response = await axios.post(
@@ -64,7 +60,7 @@ const createWebhook = async ({
       },
       {
         headers: {
-          Authorization: `token ${providerAccessToken}`
+          Authorization: `token ${accessToken}`
         }
       }
     );

@@ -60,21 +60,21 @@ router.get(
       const repository = `${owner}/${repo}`;
       const { id: userId } = req.user;
       const identifier = nanoid(64);
-      const {
-        access_token: providerAccessToken
-      } = await exchangeCodeForAccessToken(code);
+      const { access_token: accessToken } = await exchangeCodeForAccessToken(
+        code
+      );
       const { id: hookId } = await createWebhook({
         repository,
-        providerAccessToken,
+        accessToken,
         identifier
       });
       await userAppletsRepo.createUserApplet({
         appletId: APPLET_ID,
         configuration: JSON.stringify({
           repository: repository,
+          accessToken,
           hookId
         }),
-        providerAccessToken,
         identifier,
         userId
       });
