@@ -83,7 +83,7 @@ router.get(
         url: response.webhook.url,
         accessToken: response.access_token,
         refreshToken: response.refresh_token,
-        expires: Date.now + response.expires_in * 1000,
+        expires: Date.now() + response.expires_in * 1000,
         cronJobId
       });
       await userAppletsRepo.createUserApplet({
@@ -92,6 +92,11 @@ router.get(
         identifier: userApplet.identifier,
         configuration
       });
+      req.flash(
+        'success',
+        'Successfully subscribed to COVID-19 Discord report!'
+      );
+      res.redirect('/');
     } catch (err) {
       next(err);
     }
