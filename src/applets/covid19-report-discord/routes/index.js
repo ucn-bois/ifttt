@@ -110,7 +110,9 @@ router.post(
   async (req, res, next) => {
     try {
       const { identifier } = req.params;
-      const userApplet = userAppletsRepo.findUserAppletByIdentifier(identifier);
+      const userApplet = await userAppletsRepo.findUserAppletByIdentifier(
+        identifier
+      );
       const { url, cronJobId } = JSON.parse(userApplet.configuration);
       await removeWebhook(url);
       await cronJobRepo.deleteCronJobById(cronJobId);
