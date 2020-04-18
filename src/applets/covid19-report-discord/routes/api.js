@@ -11,7 +11,9 @@ router.post(
   async (req, res, next) => {
     try {
       const { identifier } = req.params;
-      const userApplet = userAppletsRepo.findUserAppletByIdentifier(identifier);
+      const userApplet = await userAppletsRepo.findUserAppletByIdentifier(
+        identifier
+      );
       const { country, url } = JSON.parse(userApplet.configuration);
       const data = await fetchAndProcessCovid19Data(country);
       await sendDiscordMessage({ url, content: JSON.stringify(data) });
