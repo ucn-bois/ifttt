@@ -56,7 +56,7 @@ router.post(
   }
 );
 
-router.post(
+router.get(
   // TODO test this and then continue with accepting the scheduler's request and send a webhook out, then focus on removeWebhook()
   '/applets/covid19-report-discord/subscribe',
   ensureLoggedIn,

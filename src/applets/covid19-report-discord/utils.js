@@ -15,17 +15,18 @@ const AUTH_URL = [
 const getAccessToken = async ({ code }) => {
   const response = await axios.post(
     'https://discordapp.com/api/v6/oauth2/token',
-    {
-      client_id: CLIENT_ID,
-      client_secret: CLIENT_SECRET,
-      grant_type: 'authorization_code',
-      code: code,
-      redirect_uri: `${REDIRECT_URI}`,
-      scope: 'webhook.incoming'
-    },
+    {},
     {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: {
+        client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET,
+        grant_type: 'authorization_code',
+        code: code,
+        redirect_uri: `${REDIRECT_URI}`,
+        scope: 'webhook.incoming'
       }
     }
   );
