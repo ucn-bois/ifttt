@@ -70,13 +70,13 @@ const createWebhook = async ({ repository, accessToken, identifier }) => {
   return response.data;
 };
 
-const removeWebhook = async ({ repository, hookId, providerAccessToken }) => {
+const removeWebhook = async ({ repository, hookId, accessToken }) => {
   try {
     await axios.delete(
       `https://api.github.com/repos/${repository}/hooks/${hookId}`,
       {
         headers: {
-          Authorization: `token ${providerAccessToken}`
+          Authorization: `token ${accessToken}`
         }
       }
     );

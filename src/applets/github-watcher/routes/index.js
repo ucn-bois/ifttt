@@ -94,10 +94,10 @@ router.post(
   ensureLoggedIn,
   async (req, res, next) => {
     try {
-      const { providerAccessToken, config } = req.body;
-      const { repository, hookId } = JSON.parse(config);
+      const { config } = req.body;
+      const { accessToken, repository, hookId } = JSON.parse(config);
       const { identifier } = req.params;
-      await removeWebhook({ repository, hookId, providerAccessToken });
+      await removeWebhook({ repository, hookId, accessToken });
       await userAppletsRepo.deleteUserAppletByIdentifier(identifier);
       req.flash(
         'success',
