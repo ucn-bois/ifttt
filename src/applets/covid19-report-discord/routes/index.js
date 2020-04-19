@@ -77,7 +77,6 @@ router.get(
         appletId: APPLET_ID,
         userId
       });
-      await userAppletsRepo.deleteUserAppletByIdentifier(userApplet.identifier);
       let configuration = JSON.parse(userApplet.configuration);
       const cronJobId = await cronJobRepo.createCronJob({
         expression: `${configuration.minute} ${configuration.hour} * * *`,

@@ -33,15 +33,14 @@ const getAccessToken = async ({ code }) => {
   return response.data;
 };
 
-const sendDiscordMessage = async ({ url, content }) => {
+const sendDiscordMessage = async ({ url, country, content }) => {
   await axios.post(url, {
-    content: content,
     username: 'COVID-19 Report Messenger',
     embeds: [
       {
-        title: `${Object.keys(content)[0]} ${content.date}`,
+        title: `${country} ${content.date}`,
         type: 'rich',
-        description: `Cases confirmed: ${content.confirmed}, deaths: ${content.deaths}, recovered: ${content.recovered} `
+        description: `Cases confirmed: ${content.confirmed}, deaths: ${content.deaths}, people recovered: ${content.recovered} `
       }
     ]
   });

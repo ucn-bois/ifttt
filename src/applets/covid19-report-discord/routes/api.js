@@ -16,7 +16,7 @@ router.post(
       );
       const { country, url } = JSON.parse(userApplet.configuration);
       const data = await fetchAndProcessCovid19Data(country);
-      await sendDiscordMessage({ url, content: data });
+      await sendDiscordMessage({ url, country, content: data });
     } catch (err) {
       next(err);
     }
