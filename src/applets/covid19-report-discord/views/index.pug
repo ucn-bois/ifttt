@@ -3,6 +3,8 @@ extends ../../../views/base
 block content
   h1 Discord applet
   if userApplet
+    - var config = JSON.parse(userApplet.configuration);
+    p You are subscribed to reports from #{config.country} every day at #{config.hour}:#{config.minute}
     form(
       action=`/applets/covid19-report-discord/unsubscribe/${userApplet.identifier}`,
       method='POST'

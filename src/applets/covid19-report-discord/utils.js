@@ -40,7 +40,7 @@ const sendDiscordMessage = async ({ url, country, content }) => {
       {
         title: `${country} ${content.date}`,
         type: 'rich',
-        description: `Cases confirmed: ${content.confirmed}, deaths: ${content.deaths}, people recovered: ${content.recovered} `
+        description: `Cases confirmed: ${content.confirmed} Deaths: ${content.deaths} People recovered: ${content.recovered} `
       }
     ]
   });
