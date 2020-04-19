@@ -80,7 +80,7 @@ router.get(
       await userAppletsRepo.deleteUserAppletByIdentifier(userApplet.identifier);
       let configuration = JSON.parse(userApplet.configuration);
       const cronJobId = await cronJobRepo.createCronJob({
-        expression: `${config.minute} ${config.hour} * * *`,
+        expression: `${configuration.minute} ${configuration.hour} * * *`,
         httpMethod: 'POST',
         url: `https://ifttt.merys.eu/api/applets/covid19-report-discord/execute/${userApplet.identifier}`
       });
