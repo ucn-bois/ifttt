@@ -2,11 +2,11 @@ const router = require('express').Router();
 const nanoid = require('nanoid');
 
 const { ensureLoggedIn } = require('../../../utils');
+const { fetchCountries } = require('../../shared/covid19-report/utils');
 const {
   APPLET_ID,
   AUTH_URL,
   getAccessToken,
-  revokeToken,
   removeWebhook
 } = require('../utils');
 const userAppletsRepo = require('../../../repositories/userApplets');
@@ -28,7 +28,8 @@ router.get(
         // Continue without action
       }
       res.render('covid19-report-discord/views/index', {
-        userApplet
+        userApplet,
+        countries: await fetchCountries()
       });
     } catch (err) {
       next(err);
@@ -58,38 +59,40 @@ router.post(
 );
 
 router.get(
-  // TODO test this and then continue with accepting the scheduler's request and send a webhook out, then focus on removeWebhook()
   '/applets/covid19-report-discord/subscribe',
   ensureLoggedIn,
   async (req, res, next) => {
     try {
-      const { code } = req.query;
+      let response;
+      try {
+        const { code } = req.query;
+        response = await getAccessToken({ code });
+      } catch (err) {
+        const { error_description: errorDescription } = req.query;
+        req.flash('error', errorDescription);
+        res.redirect('/');
+      }
       const { id: userId } = req.user;
       const userApplet = await userAppletsRepo.findUserAppletByAppletAndUserId({
         appletId: APPLET_ID,
         userId
       });
       await userAppletsRepo.deleteUserAppletByIdentifier(userApplet.identifier);
-      const oldConfig = JSON.parse(userApplet.configuration);
-      const response = await getAccessToken({ code });
+      let configuration = JSON.parse(userApplet.configuration);
       const cronJobId = await cronJobRepo.createCronJob({
-        expression: `${oldConfig.minute} ${oldConfig.hour} * * *`,
+        expression: `${config.minute} ${config.hour} * * *`,
         httpMethod: 'POST',
         url: `https://ifttt.merys.eu/api/applets/covid19-report-discord/execute/${userApplet.identifier}`
       });
-      const configuration = JSON.stringify({
-        country: oldConfig.country,
-        hour: oldConfig.hour,
-        minute: oldConfig.minute,
+      configuration = JSON.stringify({
+        ...configuration,
         url: response.webhook.url,
         accessToken: response.access_token,
         refreshToken: response.refresh_token,
         expires: Date.now() + response.expires_in * 1000,
         cronJobId
       });
-      await userAppletsRepo.createUserApplet({
-        appletId: APPLET_ID,
-        userId,
+      await userAppletsRepo.updateConfigByIdentifier({
         identifier: userApplet.identifier,
         configuration
       });
@@ -127,5 +130,7 @@ router.post(
     }
   }
 );
+
+// TODO nicer message formatting, country dropdown, display info about channel, country and time in applet home
 
 module.exports = router;

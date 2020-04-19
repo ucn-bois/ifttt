@@ -33,30 +33,17 @@ const getAccessToken = async ({ code }) => {
   return response.data;
 };
 
-const revokeToken = async ({ refreshToken }) => {
-  const response = await axios.post(
-    'https://discordapp.com/api/v6/oauth2/token',
-    {
-      client_id: CLIENT_ID,
-      client_secret: CLIENT_SECRET,
-      grant_type: 'refresh_token',
-      refresh_token: refreshToken,
-      redirect_uri: REDIRECT_URI,
-      scope: 'webhook.incoming'
-    },
-    {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    }
-  );
-  return response.data;
-};
-
 const sendDiscordMessage = async ({ url, content }) => {
   await axios.post(url, {
     content: content,
-    username: 'COVID-19 Report Messenger'
+    username: 'COVID-19 Report Messenger',
+    embeds: [
+      {
+        title: `${Object.keys(content)[0]} ${content.date}`,
+        type: 'rich',
+        description: `Cases confirmed: ${content.confirmed}, deaths: ${content.deaths}, recovered: ${content.recovered} `
+      }
+    ]
   });
 };
 
@@ -68,7 +55,6 @@ module.exports = {
   APPLET_ID,
   AUTH_URL,
   getAccessToken,
-  revokeToken,
   sendDiscordMessage,
   removeWebhook
 };

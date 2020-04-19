@@ -11,6 +11,14 @@ const fetchAndProcessCovid19Data = async country => {
   return response.data[country].pop();
 };
 
+const fetchCountries = async () => {
+  const response = await axios.get(
+    'https://pomber.github.io/covid19/timeseries.json'
+  );
+  return Object.keys(response.data);
+};
+
 module.exports = {
-  fetchAndProcessCovid19Data
+  fetchAndProcessCovid19Data,
+  fetchCountries
 };

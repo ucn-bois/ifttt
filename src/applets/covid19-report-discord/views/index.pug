@@ -17,5 +17,7 @@ block content
       label(for='minute') Minute
       input#minute(type='number', name='minute', max=60, min=0, required)
       label(for='country') Country
-      input#country(type='text', name='country', required)
+      select(name='country')
+        each country in countries
+          option(value=country) #{country}
       button(type='submit') Subscribe
