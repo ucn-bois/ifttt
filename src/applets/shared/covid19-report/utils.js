@@ -1,5 +1,6 @@
 const axios = require('axios');
 const createError = require('http-errors');
+
 const countries = [
   'Afghanistan',
   'Albania',
@@ -198,9 +199,7 @@ const fetchAndProcessCovid19Data = async country => {
   return response.data[country].pop();
 };
 
-const fetchCountries = async () => countries;
-
 module.exports = {
-  fetchAndProcessCovid19Data,
-  fetchCountries
+  countries,
+  fetchAndProcessCovid19Data
 };

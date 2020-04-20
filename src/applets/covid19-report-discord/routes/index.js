@@ -2,7 +2,7 @@ const router = require('express').Router();
 const nanoid = require('nanoid');
 
 const { ensureLoggedIn } = require('../../../utils');
-const { fetchCountries } = require('../../shared/covid19-report/utils');
+const { countries } = require('../../shared/covid19-report/utils');
 const {
   APPLET_ID,
   AUTH_URL,
@@ -29,7 +29,7 @@ router.get(
       }
       res.render('covid19-report-discord/views/index', {
         userApplet,
-        countries: await fetchCountries()
+        countries
       });
     } catch (err) {
       next(err);
