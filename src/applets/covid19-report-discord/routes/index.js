@@ -65,7 +65,7 @@ router.get(
       } catch (err) {
         const { error_description: errorDescription } = req.query;
         req.flash('error', errorDescription);
-        res.redirect('/');
+        return res.redirect('/');
       }
       const { state } = req.query;
       const { country, hour, minute } = JSON.parse(state);
