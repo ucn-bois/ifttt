@@ -2,6 +2,7 @@ const router = require('express').Router();
 const nanoid = require('nanoid');
 
 const { ensureLoggedIn } = require('../../../utils');
+const { fetchCountries } = require('../../shared/covid19-report/utils');
 const cronJobRepo = require('../../../repositories/cronJob');
 const userAppletsRepo = require('../../../repositories/userApplets');
 
@@ -23,7 +24,8 @@ router.get(
         // Do nothing. Continue.
       }
       res.render('covid19-report-mail/views/index', {
-        userApplet
+        userApplet,
+        countries: await fetchCountries()
       });
     } catch (err) {
       next(err);
