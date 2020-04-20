@@ -59,10 +59,19 @@ const findUserAppletByIdentifierAndUserId = async ({ identifier, userId }) => {
   return userApplet;
 };
 
+const updateConfigByIdentifier = async ({ identifier, configuration }) => {
+  await db('userApplets')
+    .where({ identifier })
+    .update({
+      configuration
+    });
+};
+
 module.exports = {
   createUserApplet,
   deleteUserAppletByIdentifier,
   findUserAppletByAppletAndUserId,
   findUserAppletByIdentifier,
-  findUserAppletByIdentifierAndUserId
+  findUserAppletByIdentifierAndUserId,
+  updateConfigByIdentifier
 };

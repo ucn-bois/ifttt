@@ -53,6 +53,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // API
+app.use(require('./src/applets/covid19-report-discord/routes/api'));
 app.use(require('./src/applets/covid19-report-mail/routes/api'));
 app.use(require('./src/applets/dropbox-watcher/routes/api'));
 app.use(require('./src/applets/github-watcher/routes/api'));
@@ -69,6 +70,7 @@ app.use(require('./src/routes/user'));
 app.use(require('./src/routes/auth'));
 
 // Applets
+app.use(require('./src/applets/covid19-report-discord/routes'));
 app.use(require('./src/applets/covid19-report-mail/routes'));
 app.use(require('./src/applets/dropbox-watcher/routes'));
 app.use(require('./src/applets/github-watcher/routes'));

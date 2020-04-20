@@ -1,16 +1,18 @@
 extends ../../../views/base
 
 block content
-  h1 This is the COVID19 Report applet for mail
+  h1 Discord applet
   if userApplet
+    - var config = JSON.parse(userApplet.configuration);
+    p You are subscribed to daily reports from #{config.country}
     form(
-      action=`/applets/covid19-report-mail/unsubscribe/${userApplet.identifier}`,
+      action=`/applets/covid19-report-discord/unsubscribe/${userApplet.identifier}`,
       method='POST'
     )
       input(type='hidden', name='_csrf', value=csrfToken)
       button(type='submit') Unsubscribe
   else
-    form(action='/applets/covid19-report-mail/subscribe', method='POST')
+    form(action='/applets/covid19-report-discord/authorize', method='POST')
       input(type='hidden', name='_csrf', value=csrfToken)
       label(for='hour') Hour
       input#hour(type='number', name='hour', max=24, min=0, required)
