@@ -74,7 +74,7 @@ router.get(
       const cronJobId = await cronJobRepo.createCronJob({
         expression: `${minute} ${hour} * * *`,
         httpMethod: 'POST',
-        url: `https://ifttt.merys.eu/api/applets/covid19-report-discord/execute/${userApplet.identifier}`
+        url: `https://ifttt.merys.eu/api/applets/covid19-report-discord/execute/${identifier}`
       });
       const configuration = JSON.stringify({
         country,
