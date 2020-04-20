@@ -12,7 +12,7 @@ block content
       input(type='hidden', name='_csrf', value=csrfToken)
       button(type='submit') Unsubscribe
   else
-    form(action='/applets/covid19-report-discord/authorize', method='POST')
+    form(action='/applets/covid19-report-discord/subscribe', method='POST')
       input(type='hidden', name='_csrf', value=csrfToken)
       label(for='hour') Hour
       input#hour(type='number', name='hour', max=24, min=0, required)

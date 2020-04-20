@@ -43,15 +43,9 @@ router.post(
   async (req, res, next) => {
     try {
       const { country, hour, minute } = req.body;
-      const { id: userId } = req.user;
-      const identifier = nanoid(64);
-      await userAppletsRepo.createUserApplet({
-        appletId: APPLET_ID,
-        userId,
-        configuration: JSON.stringify({ country, hour, minute }),
-        identifier
-      });
-      res.redirect(AUTH_URL);
+      res.redirect(
+        `${AUTH_URL}&state={'country':'${country}','hour':'${hour}','minute':'${minute}'}`
+      );
     } catch (err) {
       next(err);
     }
@@ -65,6 +59,7 @@ router.get(
     try {
       let response;
       try {
+        // this block catches an error when the user cancels the authorization flow
         const { code } = req.query;
         response = await getAccessToken({ code });
       } catch (err) {
@@ -72,28 +67,30 @@ router.get(
         req.flash('error', errorDescription);
         res.redirect('/');
       }
+      const { state } = req.query;
+      const { country, hour, minute } = JSON.parse(state);
       const { id: userId } = req.user;
-      const userApplet = await userAppletsRepo.findUserAppletByAppletAndUserId({
-        appletId: APPLET_ID,
-        userId
-      });
-      let configuration = JSON.parse(userApplet.configuration);
+      const identifier = nanoid(64);
       const cronJobId = await cronJobRepo.createCronJob({
-        expression: `${configuration.minute} ${configuration.hour} * * *`,
+        expression: `${minute} ${hour} * * *`,
         httpMethod: 'POST',
         url: `https://ifttt.merys.eu/api/applets/covid19-report-discord/execute/${userApplet.identifier}`
       });
-      configuration = JSON.stringify({
-        ...configuration,
+      const configuration = JSON.stringify({
+        country,
+        hour,
+        minute,
         url: response.webhook.url,
         accessToken: response.access_token,
         refreshToken: response.refresh_token,
         expires: Date.now() + response.expires_in * 1000,
         cronJobId
       });
-      await userAppletsRepo.updateConfigByIdentifier({
-        identifier: userApplet.identifier,
-        configuration
+      await userAppletsRepo.createUserApplet({
+        appletId: APPLET_ID,
+        userId,
+        configuration,
+        identifier
       });
       req.flash(
         'success',
