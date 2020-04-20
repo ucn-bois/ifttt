@@ -44,7 +44,7 @@ router.post(
     try {
       const { country, hour, minute } = req.body;
       res.redirect(
-        `${AUTH_URL}&state={'country':'${country}','hour':'${hour}','minute':'${minute}'}`
+        `${AUTH_URL}&state={"country":"${country}","hour":"${hour}","minute":"${minute}"}`
       );
     } catch (err) {
       next(err);
