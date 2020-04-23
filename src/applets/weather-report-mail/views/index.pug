@@ -1,0 +1,7 @@
+extends ../../../views/base
+
+block content
+  h1 Weather mail report applet
+  form(action='/applets/weather-report-mail/subscribe', method='POST')
+    input(type='hidden', name='_csrf', value=csrfToken)
+    button(type='submit') Sub

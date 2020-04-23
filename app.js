@@ -74,6 +74,7 @@ app.use(require('./src/applets/covid19-report-discord/routes'));
 app.use(require('./src/applets/covid19-report-mail/routes'));
 app.use(require('./src/applets/dropbox-watcher/routes'));
 app.use(require('./src/applets/github-watcher/routes'));
+app.use(require('./src/applets/weather-report-mail/routes'));
 
 // 404 Handler
 app.use((req, res, next) => {
