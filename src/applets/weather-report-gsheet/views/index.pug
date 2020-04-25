@@ -1,0 +1,26 @@
+extends ../../../views/base
+
+block content
+    h1 Weather Google Sheet report applet
+    if userApplet
+        - const appletConfig = JSON.parse(userApplet.configuration);
+        - const minute = appletConfig.minute < 10 ? `0${appletConfig.minute}` : appletConfig.minute;
+        p You are subscribed to receive daily updates about weather in #{appletConfig.city} at #{appletConfig.hour}:#{minute}
+        form(
+            action=`/applets/weather-report-gsheet/unsubscribe/${userApplet.identifier}`,
+            method='POST'
+        )
+            input(type='hidden', name='_csrf', value=csrfToken)
+            button(type='submit') Unsubscribe
+    else
+        form(action='/applets/weather-report-gsheet/subscribe', method='POST')
+            input(type='hidden', name='_csrf', value=csrfToken)
+            label(for='hour') Hour
+            input#hour(type='number', name='hour', max=24, min=0, required)
+            label(for='minute') Minute
+            input#minute(type='number', name='minute', max=60, min=0, required)
+            label(for='city') City
+            input#city(type='text', name='city', required)
+            label(for='gsheetUrl') Google Sheet Link
+            input#gsheetUrl(type='text', name='gsheetUrl', required)
+            button(type='submit') Subscribe
