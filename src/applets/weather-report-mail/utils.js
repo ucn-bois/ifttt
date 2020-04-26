@@ -43,7 +43,7 @@ const sendMail = async (email, data) => {
 };
 
 const convertTimestampToTime = (ts, tz) => {
-  return moment.tz(ts, tz).format('HH:mm');
+  return moment.tz(ts * 1000, tz).format('HH:mm');
 };
 
 module.exports = {
