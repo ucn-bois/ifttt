@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const passport = require('passport');
+const { check, validationResult } = require('express-validator');
 
 const { ensureLoggedIn, ensureLoggedOut } = require('../utils');
 const authRepo = require('../repositories/auth');
@@ -36,25 +37,27 @@ router.get('/auth/sign-up', ensureLoggedOut, (req, res) =>
 /**
  * [POST] Sign up
  */
-router.post('/auth/sign-up', ensureLoggedOut, async (req, res, next) => {
-  try {
-    const { email, plainPassword, repeatedPlainPassword, username } = req.body;
-    authRepo.comparePlainPasswords({
-      plainPassword,
-      repeatedPlainPassword
-    });
-    await usersRepo.createUser({
-      email,
-      hashedPassword: await authRepo.hashPassword(plainPassword),
-      username
-    });
-    const { id: userId } = await usersRepo.findUserByUsername(username);
-    await userVerificationsRepo.createUserVerification({ email, userId });
-    res.redirect('/auth/sign-in');
-  } catch (err) {
-    next(err);
+router.post(
+  '/auth/sign-up',
+  ensureLoggedOut,
+  authRepo.validateCredentials,
+  async (req, res, next) => {
+    try {
+      authRepo.credValidationResult(req);
+      const { email, plainPassword, username } = req.body;
+      await usersRepo.createUser({
+        email,
+        hashedPassword: await authRepo.hashPassword(plainPassword),
+        username
+      });
+      const { id: userId } = await usersRepo.findUserByUsername(username);
+      await userVerificationsRepo.createUserVerification({ email, userId });
+      res.redirect('/auth/sign-in');
+    } catch (err) {
+      next(err);
+    }
   }
-});
+);
 
 /**
  * [GET] Sign out
