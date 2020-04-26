@@ -4,7 +4,7 @@ const { fetchWeatherData, inputIntoGoogleSheet } = require('../utils');
 const userAppletsRepo = require('../../../repositories/userApplets');
 
 router.post(
-  '/api/applets/weather-report-gsheets/execute/:identifier',
+  '/api/applets/weather-report-gsheet/execute/:identifier',
   async (req, res, next) => {
     try {
       const { identifier } = req.params;
