@@ -1,4 +1,5 @@
 const axios = require('axios');
+const moment = require('moment-timezone');
 
 const { sg } = require('../../clients');
 
@@ -33,19 +34,16 @@ const sendMail = async (email, data) => {
       forecastDesc: forecast.weather.description,
       minTemp: forecast.min_temp,
       maxTemp: forecast.max_temp,
-      sunrise: convertTimestampToTime(forecast.sunrise_ts),
-      sunset: convertTimestampToTime(forecast.sunset_ts),
+      sunrise: convertTimestampToTime(forecast.sunrise_ts, data.timezone),
+      sunset: convertTimestampToTime(forecast.sunset_ts, data.timezone),
       windDir: forecast.wind_cdir_full,
       windSpeed: windInKm
     }
   });
 };
 
-const convertTimestampToTime = ts => {
-  const date = new Date(ts * 1000);
-  const hours = date.getHours();
-  const minutes = '0' + date.getMinutes();
-  return hours + ':' + minutes.substr(-2);
+const convertTimestampToTime = (ts, tz) => {
+  return moment(ts * 1000, tz).format('HH:mm');
 };
 
 module.exports = {
