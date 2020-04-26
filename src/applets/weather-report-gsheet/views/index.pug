@@ -10,8 +10,8 @@ block content
             action=`/applets/weather-report-gsheet/unsubscribe/${userApplet.identifier}`,
             method='POST'
         )
-            input(type='hidden', name='_csrf', value=csrfToken)
-            button(type='submit') Unsubscribe
+        input(type='hidden', name='_csrf', value=csrfToken)
+        button(type='submit') Unsubscribe
     else
         form(action='/applets/weather-report-gsheet/subscribe', method='POST')
             input(type='hidden', name='_csrf', value=csrfToken)

@@ -1,8 +1,7 @@
 const router = require('express').Router();
 
-const { fetchWeatherData, setFirstRow } = require('../utils');
+const { fetchWeatherData, inputIntoGoogleSheet } = require('../utils');
 const userAppletsRepo = require('../../../repositories/userApplets');
-const userRepo = require('../../../repositories/users');
 
 router.post(
   '/api/applets/weather-report-gsheets/execute/:identifier',
@@ -10,9 +9,9 @@ router.post(
     try {
       const { identifier } = req.params;
       const userApplet = await userAppletsRepo.findUserAppletByIdentifier(identifier);
-      //const user = await userRepo.findUserById(userApplet.userId);
       const { city, spreadsheetId } = JSON.parse(userApplet.configuration);
-      await setFirstRow(spreadsheetId);
+      const data = await fetchWeatherData(city);
+      await inputIntoGoogleSheet(spreadsheetId, data);
     } catch (err) {
       next(err);
     }

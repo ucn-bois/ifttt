@@ -21,23 +21,21 @@ const fetchWeatherData = async city => {
   return response.data;
 };
 
-const setFirstRow = async spreadsheetId => {
-  const response = await axios.put(
-    'https://sheets.googleapis.com/v4/spreadsheets/d/${spreadsheetId}', {
+// WIP
+const inputIntoGoogleSheet = async (spreadsheetId, data) => {
+  const forecast = data.data[0];
+  const windInKm = Math.round(forecast.wind_spd * 3.6);
+  await axios.post(
+    'https://sheets.googleapis.com/v4/spreadsheets/d/{spreadsheetId}/values/{range}:append',
+    {
       params: {
         range: 'Sheet1!A1:C1',
         majorDimension: 'ROWS',
-        values: ["TestA1", "TestB1", "TestC1"]
+        values: [`${data.city_name}`, `${forecast.min_temp} + " - " + ${forecast.max_temp}`, windInKm]
       }
     }
   );
-
-  console.log(response);
 };
-
-/*const inputIntoGoogleSheet = async (email, data) => {
-  const forecast = data.data[0];
-}*/
 
 const convertTimestampToTime = ts => {
   const date = new Date(ts * 1000);
@@ -49,5 +47,5 @@ const convertTimestampToTime = ts => {
 module.exports = {
   APPLET_ID,
   fetchWeatherData,
-  setFirstRow
+  inputIntoGoogleSheet
 };
