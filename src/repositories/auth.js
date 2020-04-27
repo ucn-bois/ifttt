@@ -4,6 +4,13 @@ const { check, body, validationResult } = require('express-validator');
 
 const { db } = require('../clients');
 
+// repeated password check - checks if the provided passwords match
+const comparePasswords = body('repeatedPlainPassword')
+  .custom((repeatedPassword, { req }) => {
+    return repeatedPassword === req.body.plainPassword;
+  })
+  .withMessage('Passwords do not match.');
+
 const compareHashedPasswordWithPlainPassword = async ({
   hashedPassword,
   plainPassword
@@ -16,38 +23,31 @@ const compareHashedPasswordWithPlainPassword = async ({
 
 const hashPassword = async password => await bcrypt.hash(password, 6);
 
-const validateCredentials = [
-  // email check - checks if an account exists with the provided email
-  check('email')
-    .isEmail()
-    .withMessage('Invalid email format')
-    .custom(async email => {
-      const user = await db('users')
-        .where({ email })
-        .first();
-      if (user) {
-        return Promise.reject('An account with this email already exists.');
-      }
-    }),
-  // password check - checks if the password is between 8 - 50 characters and has at least one number and one letter
-  check('plainPassword')
-    .matches('^(?=.*[A-Za-z])(?=.*d)[A-Za-zd]')
-    .withMessage(
-      'A password needs to have at least one number and one letter and must be between 8 and 50 characters.'
-    )
-    .isLength({ min: 8, max: 50 })
-    .withMessage(
-      'A password must be between 8 and 50 characters and needs to have at least one number and one letter.'
-    ),
-  // repeated password check - checks if the provided passwords match
-  body('repeatedPlainPassword')
-    .custom((repeatedPassword, { req }) => {
-      return repeatedPassword === req.body.plainPassword;
-    })
-    .withMessage('Passwords do not match.')
-];
+// email check - checks if an account exists with the provided email
+const validateEmail = check('email')
+  .isEmail()
+  .withMessage('Invalid email format')
+  .custom(async email => {
+    const user = await db('users')
+      .where({ email })
+      .first();
+    if (user) {
+      return Promise.reject('An account with this email already exists.');
+    }
+  });
 
-const credValidationResult = req => {
+// password check - checks if the password is between 8 - 50 characters and has at least one number and one letter
+const validatePassword = check('plainPassword')
+  .matches('^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])')
+  .withMessage(
+    'A password needs to have at least one number, one uppercase letter, one lowercase letter and must be between 8 and 50 characters.'
+  )
+  .isLength({ min: 8, max: 50 })
+  .withMessage(
+    'A password must be between 8 and 50 characters and needs to have at least one number, one uppercase letter and one lowercase letter.'
+  );
+
+const validationResults = req => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const error = errors.array({ onlyFirstError: true })['0'].msg;
@@ -56,8 +56,10 @@ const credValidationResult = req => {
 };
 
 module.exports = {
+  comparePasswords,
   compareHashedPasswordWithPlainPassword,
   hashPassword,
-  validateCredentials,
-  credValidationResult
+  validateEmail,
+  validatePassword,
+  validationResults
 };

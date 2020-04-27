@@ -40,10 +40,14 @@ router.get('/auth/sign-up', ensureLoggedOut, (req, res) =>
 router.post(
   '/auth/sign-up',
   ensureLoggedOut,
-  authRepo.validateCredentials,
+  [
+    authRepo.validateEmail,
+    authRepo.validatePassword,
+    authRepo.comparePasswords
+  ],
   async (req, res, next) => {
     try {
-      authRepo.credValidationResult(req);
+      authRepo.validationResults(req);
       const { email, plainPassword, username } = req.body;
       await usersRepo.createUser({
         email,
@@ -122,17 +126,15 @@ router.get(
 router.post(
   '/auth/reset-password/:identifier',
   ensureLoggedOut,
+  [authRepo.validatePassword, authRepo.comparePasswords],
   async (req, res, next) => {
     try {
+      authRepo.validationResults(req);
       const { identifier } = req.params;
-      const { plainPassword, repeatedPlainPassword } = req.body;
+      const { plainPassword } = req.body;
       const { userId } = await passwordResetsRepo.findPasswordResetByIdentifier(
         identifier
       );
-      await authRepo.comparePlainPasswords({
-        plainPassword,
-        repeatedPlainPassword
-      });
       await usersRepo.changePassword({
         newHashedPassword: await authRepo.hashPassword(plainPassword),
         userId

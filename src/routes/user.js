@@ -17,33 +17,31 @@ router.get('/user/change-password', ensureLoggedIn, (req, res) => {
 /**
  * [POST] Change password
  */
-router.post('/user/change-password', ensureLoggedIn, async (req, res, next) => {
-  try {
-    const { id: userId, password: hashedPassword } = req.user;
-    const {
-      plainPassword,
-      newPlainPassword,
-      repeatedNewPlainPassword
-    } = req.body;
-    await authRepo.compareHashedPasswordWithPlainPassword({
-      hashedPassword,
-      plainPassword
-    });
-    authRepo.comparePlainPasswords({
-      plainPassword: newPlainPassword,
-      repeatedPlainPassword: repeatedNewPlainPassword
-    });
-    const newHashedPassword = await authRepo.hashPassword(newPlainPassword);
-    await usersRepo.changePassword({
-      newHashedPassword,
-      userId
-    });
-    req.flash(`success`, `Password successfully changed.`);
-    res.redirect('/');
-  } catch (err) {
-    next(err);
+router.post(
+  '/user/change-password',
+  ensureLoggedIn,
+  [authRepo.validatePassword, authRepo.comparePasswords],
+  async (req, res, next) => {
+    try {
+      authRepo.validationResults(req);
+      const { id: userId, password: hashedPassword } = req.user;
+      const { oldPlainPassword, plainPassword } = req.body;
+      await authRepo.compareHashedPasswordWithPlainPassword({
+        hashedPassword,
+        plainPassword: oldPlainPassword
+      });
+      const newHashedPassword = await authRepo.hashPassword(plainPassword);
+      await usersRepo.changePassword({
+        newHashedPassword,
+        userId
+      });
+      req.flash(`success`, `Password successfully changed.`);
+      res.redirect('/');
+    } catch (err) {
+      next(err);
+    }
   }
-});
+);
 
 /**
  * [GET] Change email
