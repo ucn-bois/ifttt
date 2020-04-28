@@ -1,5 +1,5 @@
 const createError = require('http-errors');
-const nanoid = require('nanoid');
+const { nanoid } = require('nanoid');
 
 const { db, sg } = require('../clients');
 

@@ -31,7 +31,11 @@ const inputIntoGoogleSheet = async (spreadsheetId, data) => {
       params: {
         range: 'Sheet1!A1:C1',
         majorDimension: 'ROWS',
-        values: [`${data.city_name}`, `${forecast.min_temp} + " - " + ${forecast.max_temp}`, windInKm]
+        values: [
+          `${data.city_name}`,
+          `${forecast.min_temp} + " - " + ${forecast.max_temp}`,
+          windInKm
+        ]
       }
     }
   );

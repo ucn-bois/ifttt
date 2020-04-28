@@ -11,7 +11,7 @@ router.get('/', ensureLoggedIn, async (req, res, next) => {
     }
     const applets = await appletsRepo.getApplets(userId);
     res.render('pages/home', {
-      applets: applets
+      applets: applets,
     });
   } catch (err) {
     next(err);

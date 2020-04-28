@@ -8,7 +8,9 @@ router.post(
   async (req, res, next) => {
     try {
       const { identifier } = req.params;
-      const userApplet = await userAppletsRepo.findUserAppletByIdentifier(identifier);
+      const userApplet = await userAppletsRepo.findUserAppletByIdentifier(
+        identifier
+      );
       const { city, spreadsheetId } = JSON.parse(userApplet.configuration);
       const data = await fetchWeatherData(city);
       await inputIntoGoogleSheet(spreadsheetId, data);

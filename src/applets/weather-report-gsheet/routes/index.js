@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const nanoid = require('nanoid');
+const { nanoid } = require('nanoid');
 
 const { ensureLoggedIn } = require('../../../utils');
 const { APPLET_ID } = require('../utils');
@@ -11,7 +11,7 @@ router.get(
   ensureLoggedIn,
   async (req, res, next) => {
     try {
-      const { id: userId} = req.user;
+      const { id: userId } = req.user;
       let userApplet;
       try {
         userApplet = await userAppletsRepo.findUserAppletByAppletAndUserId({
@@ -23,7 +23,7 @@ router.get(
       }
       res.render('weather-report-gsheet/views/index', { userApplet });
     } catch (err) {
-        next(err);
+      next(err);
     }
   }
 );
@@ -42,14 +42,25 @@ router.post(
         //https://ifttt.merys.eu/
         url: `localhost:3000/api/applets/weather-report-gsheet/execute/${identifier}`
       });
-      const spreadsheetId = new RegExp("/spreadsheets/d/([a-zA-Z0-9-_]+)").exec(gsheetUrl)[1];
+      const spreadsheetId = new RegExp('/spreadsheets/d/([a-zA-Z0-9-_]+)').exec(
+        gsheetUrl
+      )[1];
       await userAppletsRepo.createUserApplet({
-        configuration: JSON.stringify({ hour, minute, city, spreadsheetId, cronJobId }),
+        configuration: JSON.stringify({
+          hour,
+          minute,
+          city,
+          spreadsheetId,
+          cronJobId
+        }),
         userId,
         appletId: APPLET_ID,
         identifier
       });
-      req.flash('success', 'Successfully subscribed to Google Sheet weather report.');
+      req.flash(
+        'success',
+        'Successfully subscribed to Google Sheet weather report.'
+      );
       res.redirect('/applets/weather-report-gsheet');
     } catch (err) {
       next(err);

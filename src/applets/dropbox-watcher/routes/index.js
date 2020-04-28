@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const nanoid = require('nanoid');
+const { nanoid } = require('nanoid');
 
 const { ensureLoggedIn } = require('../../../utils');
 const { APPLET_ID, AUTH_URL, exchangeCodeForAccessToken } = require('../utils');
