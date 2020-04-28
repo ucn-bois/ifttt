@@ -16,7 +16,7 @@ router.get(
       try {
         userApplet = await userAppletsRepo.findUserAppletByAppletAndUserId({
           appletId: APPLET_ID,
-          userId
+          userId,
         });
       } catch (err) {
         // Nothing
@@ -40,7 +40,7 @@ router.post(
         expression: `${minute} ${hour} * * *`,
         httpMethod: 'POST',
         // https://ifttt.merys.eu/
-        url: `localhost:3000/api/applets/weather-report-gsheet/execute/${identifier}`
+        url: `localhost:3000/api/applets/weather-report-gsheet/execute/${identifier}`,
       });
       const spreadsheetId = new RegExp('/spreadsheets/d/([a-zA-Z0-9-_]+)').exec(
         gsheetUrl
@@ -52,10 +52,10 @@ router.post(
           cronJobId,
           hour,
           minute,
-          spreadsheetId
+          spreadsheetId,
         }),
         identifier,
-        userId
+        userId,
       });
       req.flash(
         'success',

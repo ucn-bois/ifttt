@@ -2,7 +2,7 @@ const axios = require('axios');
 
 const APPLET_ID = 6;
 
-const fetchWeatherData = async city => {
+const fetchWeatherData = async (city) => {
   const response = await axios.get(
     'https://api.weatherbit.io/v2.0/forecast/daily',
     {
@@ -11,8 +11,8 @@ const fetchWeatherData = async city => {
         days: 1,
         key: process.env.APPLET_WEATHERBIT_APP_ID,
         lang: 'en',
-        units: 'M'
-      }
+        units: 'M',
+      },
     }
   );
 
@@ -32,14 +32,14 @@ const inputIntoGoogleSheet = async (spreadsheetId, data) => {
         values: [
           `${data.city_name}`,
           `${forecast.min_temp} + " - " + ${forecast.max_temp}`,
-          windInKm
-        ]
-      }
+          windInKm,
+        ],
+      },
     }
   );
 };
 
-const convertTimestampToTime = ts => {
+const convertTimestampToTime = (ts) => {
   const date = new Date(ts * 1000);
   const hours = date.getHours();
   const minutes = '0' + date.getMinutes();
@@ -50,5 +50,5 @@ module.exports = {
   APPLET_ID,
   convertTimestampToTime,
   fetchWeatherData,
-  inputIntoGoogleSheet
+  inputIntoGoogleSheet,
 };
