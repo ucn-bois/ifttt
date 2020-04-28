@@ -5,10 +5,10 @@ const { ensureLoggedIn } = require('../../../utils');
 const {
   APPLET_ID,
   AUTH_URL,
-  exchangeCodeForAccessToken,
   createWebhook,
+  exchangeCodeForAccessToken,
   removeWebhook,
-  validateRepoName
+  validateRepoName,
 } = require('../utils');
 const userAppletsRepo = require('../../../repositories/userApplets');
 
@@ -22,13 +22,13 @@ router.get(
       try {
         userApplet = await userAppletsRepo.findUserAppletByAppletAndUserId({
           appletId: APPLET_ID,
-          userId
+          userId,
         });
       } catch (err) {
         // Do nothing? Okay.
       }
       res.render('github-watcher/views/index', {
-        userApplet
+        userApplet,
       });
     } catch (err) {
       next(err);
@@ -64,19 +64,19 @@ router.get(
         code
       );
       const { id: hookId } = await createWebhook({
-        repository,
         accessToken,
-        identifier
+        identifier,
+        repository,
       });
       await userAppletsRepo.createUserApplet({
         appletId: APPLET_ID,
         configuration: JSON.stringify({
-          repository: repository,
           accessToken,
-          hookId
+          hookId,
+          repository: repository,
         }),
         identifier,
-        userId
+        userId,
       });
       req.flash(
         'success',
@@ -95,9 +95,9 @@ router.post(
   async (req, res, next) => {
     try {
       const { config } = req.body;
-      const { accessToken, repository, hookId } = JSON.parse(config);
+      const { accessToken, hookId, repository } = JSON.parse(config);
       const { identifier } = req.params;
-      await removeWebhook({ repository, hookId, accessToken });
+      await removeWebhook({ accessToken, hookId, repository });
       await userAppletsRepo.deleteUserAppletByIdentifier(identifier);
       req.flash(
         'success',

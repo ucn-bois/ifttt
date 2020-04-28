@@ -16,7 +16,7 @@ router.get(
       try {
         userApplet = await userAppletsRepo.findUserAppletByAppletAndUserId({
           appletId: APPLET_ID,
-          userId
+          userId,
         });
       } catch (err) {
         // Well, there is nothing to do here.
@@ -35,17 +35,17 @@ router.post(
     try {
       const { id: userId } = req.user;
       const identifier = nanoid(64);
-      const { hour, minute, city } = req.body;
+      const { city, hour, minute } = req.body;
       const cronJobId = await cronJobRepo.createCronJob({
         expression: `${minute} ${hour} * * *`,
         httpMethod: 'POST',
-        url: `https://ifttt.merys.eu/api/applets/weather-report-mail/execute/${identifier}`
+        url: `https://ifttt.merys.eu/api/applets/weather-report-mail/execute/${identifier}`,
       });
       await userAppletsRepo.createUserApplet({
-        configuration: JSON.stringify({ hour, minute, city, cronJobId }),
-        userId,
         appletId: APPLET_ID,
-        identifier
+        configuration: JSON.stringify({ city, cronJobId, hour, minute }),
+        identifier,
+        userId,
       });
       req.flash('success', 'Successfully subscribed to mail weather report.');
       res.redirect('/applets/weather-report-mail');

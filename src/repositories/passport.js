@@ -18,7 +18,7 @@ const PassportLocalStrategy = new LocalStrategy(
       const user = await usersRepo.findUserByUsername(username);
       await authRepo.compareHashedPasswordWithPlainPassword({
         hashedPassword: user.password,
-        plainPassword: password
+        plainPassword: password,
       });
       done(null, user);
     } catch (err) {
@@ -32,5 +32,5 @@ const serializeUser = (user, done) => done(null, user.id);
 module.exports = {
   deserializeUser,
   PassportLocalStrategy,
-  serializeUser
+  serializeUser,
 };

@@ -6,19 +6,17 @@ const createUserApplet = async ({
   appletId,
   configuration,
   identifier,
-  userId
+  userId,
 }) =>
   await db('userApplets').insert({
     appletId,
     configuration,
     identifier,
-    userId
+    userId,
   });
 
-const deleteUserAppletByIdentifier = async identifier =>
-  await db('userApplets')
-    .where({ identifier })
-    .delete();
+const deleteUserAppletByIdentifier = async (identifier) =>
+  await db('userApplets').where({ identifier }).delete();
 
 const findUserAppletByAppletAndUserId = async ({ appletId, userId }) => {
   const userApplet = await db('userApplets')
@@ -33,10 +31,8 @@ const findUserAppletByAppletAndUserId = async ({ appletId, userId }) => {
   return userApplet;
 };
 
-const findUserAppletByIdentifier = async identifier => {
-  const userApplet = await db('userApplets')
-    .where({ identifier })
-    .first();
+const findUserAppletByIdentifier = async (identifier) => {
+  const userApplet = await db('userApplets').where({ identifier }).first();
   if (!userApplet) {
     throw createError(
       404,
@@ -59,12 +55,10 @@ const findUserAppletByIdentifierAndUserId = async ({ identifier, userId }) => {
   return userApplet;
 };
 
-const updateConfigByIdentifier = async ({ identifier, configuration }) => {
-  await db('userApplets')
-    .where({ identifier })
-    .update({
-      configuration
-    });
+const updateConfigByIdentifier = async ({ configuration, identifier }) => {
+  await db('userApplets').where({ identifier }).update({
+    configuration,
+  });
 };
 
 module.exports = {
@@ -73,5 +67,5 @@ module.exports = {
   findUserAppletByAppletAndUserId,
   findUserAppletByIdentifier,
   findUserAppletByIdentifierAndUserId,
-  updateConfigByIdentifier
+  updateConfigByIdentifier,
 };

@@ -7,20 +7,18 @@ const createPasswordReset = async ({ email, userId }) => {
   const identifier = nanoid(64);
   await db('passwordResets').insert({
     identifier,
-    userId
+    userId,
   });
   await sg.send({
-    to: email,
+    dynamic_template_data: { identifier },
     from: process.env.SG_FROM_EMAIL,
     templateId: 'd-e28f424c1e674799a5b155ad213d42e1',
-    dynamic_template_data: { identifier }
+    to: email,
   });
 };
 
-const findPasswordResetByIdentifier = async identifier => {
-  const verification = await db('passwordResets')
-    .where({ identifier })
-    .first();
+const findPasswordResetByIdentifier = async (identifier) => {
+  const verification = await db('passwordResets').where({ identifier }).first();
   if (!verification || !verification.pending) {
     throw createError(
       404,
@@ -30,13 +28,11 @@ const findPasswordResetByIdentifier = async identifier => {
   return verification;
 };
 
-const invalidatePasswordReset = async identifier =>
-  await db('passwordResets')
-    .where({ identifier })
-    .update({ pending: false });
+const invalidatePasswordReset = async (identifier) =>
+  await db('passwordResets').where({ identifier }).update({ pending: false });
 
 module.exports = {
   createPasswordReset,
   findPasswordResetByIdentifier,
-  invalidatePasswordReset
+  invalidatePasswordReset,
 };

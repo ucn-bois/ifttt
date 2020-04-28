@@ -21,8 +21,8 @@ router.post(
   '/auth/sign-in',
   ensureLoggedOut,
   passport.authenticate('local', {
+    failureRedirect: '/auth/sign-in',
     successRedirect: '/',
-    failureRedirect: '/auth/sign-in'
   })
 );
 
@@ -41,12 +41,12 @@ router.post('/auth/sign-up', ensureLoggedOut, async (req, res, next) => {
     const { email, plainPassword, repeatedPlainPassword, username } = req.body;
     authRepo.comparePlainPasswords({
       plainPassword,
-      repeatedPlainPassword
+      repeatedPlainPassword,
     });
     await usersRepo.createUser({
       email,
       hashedPassword: await authRepo.hashPassword(plainPassword),
-      username
+      username,
     });
     const { id: userId } = await usersRepo.findUserByUsername(username);
     await userVerificationsRepo.createUserVerification({ email, userId });
@@ -80,7 +80,7 @@ router.post(
   async (req, res, next) => {
     try {
       const { username } = req.body;
-      const { id: userId, email } = await usersRepo.findUserByUsername(
+      const { email, id: userId } = await usersRepo.findUserByUsername(
         username
       );
       await passwordResetsRepo.createPasswordReset({ email, userId });
@@ -104,7 +104,7 @@ router.get(
       const { identifier } = req.params;
       await passwordResetsRepo.findPasswordResetByIdentifier(identifier);
       res.render('auth/reset-password', {
-        identifier
+        identifier,
       });
     } catch (err) {
       next(err);
@@ -128,11 +128,11 @@ router.post(
       );
       await authRepo.comparePlainPasswords({
         plainPassword,
-        repeatedPlainPassword
+        repeatedPlainPassword,
       });
       await usersRepo.changePassword({
         newHashedPassword: await authRepo.hashPassword(plainPassword),
-        userId
+        userId,
       });
       await passwordResetsRepo.invalidatePasswordReset(identifier);
       req.flash('success', 'You can now sign in!');

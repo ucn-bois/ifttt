@@ -5,7 +5,7 @@ const { queryUserEmailsByDropboxAccountId } = require('../utils');
 router.get('/api/applets/dropbox-watcher/webhook', (req, res) => {
   res.headers = {
     'Content-Type': 'text/plain',
-    'x-Content-Type-Options': 'nosniff'
+    'x-Content-Type-Options': 'nosniff',
   };
   return res.send(req.query.challenge);
 });
@@ -13,7 +13,7 @@ router.get('/api/applets/dropbox-watcher/webhook', (req, res) => {
 router.post('/api/applets/dropbox-watcher/webhook', async (req, res, next) => {
   try {
     const {
-      list_folder: { accounts }
+      list_folder: { accounts },
     } = req.body;
     const userEmails = await queryUserEmailsByDropboxAccountId(accounts);
     console.log(userEmails);

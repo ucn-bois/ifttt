@@ -15,9 +15,9 @@ const session = require('express-session');
 const RedisStore = require('connect-redis')(session);
 
 const {
-  deserializeUser,
   PassportLocalStrategy,
-  serializeUser
+  deserializeUser,
+  serializeUser,
 } = require('./src/repositories/passport');
 
 passport.use(PassportLocalStrategy);
@@ -30,7 +30,7 @@ const redisClient = redis.createClient();
 app.set('trust proxy', true);
 app.set('views', [
   path.join(__dirname, 'src/views'),
-  path.join(__dirname, 'src/applets')
+  path.join(__dirname, 'src/applets'),
 ]);
 app.set('view engine', 'pug');
 app.use(express.static(path.join(__dirname, 'public')));
@@ -46,7 +46,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     secret: process.env.SECRET,
-    store: new RedisStore({ client: redisClient })
+    store: new RedisStore({ client: redisClient }),
   })
 );
 app.use(passport.initialize());

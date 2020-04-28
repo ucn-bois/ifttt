@@ -7,17 +7,17 @@ const createUserVerification = async ({ email, userId }) => {
   const identifier = nanoid(64);
   await db('userVerifications').insert({
     identifier,
-    userId
+    userId,
   });
   await sg.send({
-    to: email,
+    dynamic_template_data: { identifier },
     from: process.env.SG_FROM_EMAIL,
     templateId: 'd-20c4415293cc41db90ebe330b42fe312',
-    dynamic_template_data: { identifier }
+    to: email,
   });
 };
 
-const findUserVerificationByIdentifier = async identifier => {
+const findUserVerificationByIdentifier = async (identifier) => {
   const verification = await db('userVerifications')
     .where({ identifier })
     .first();
@@ -30,7 +30,7 @@ const findUserVerificationByIdentifier = async identifier => {
   return verification;
 };
 
-const invalidateUserVerification = async identifier =>
+const invalidateUserVerification = async (identifier) =>
   await db('userVerifications')
     .where({ identifier })
     .update({ pending: false });
@@ -38,5 +38,5 @@ const invalidateUserVerification = async identifier =>
 module.exports = {
   createUserVerification,
   findUserVerificationByIdentifier,
-  invalidateUserVerification
+  invalidateUserVerification,
 };

@@ -1,8 +1,7 @@
 const router = require('express').Router();
-const signInRequired = require('connect-ensure-login').ensureLoggedIn;
 const signOutRequired = require('connect-ensure-login').ensureLoggedOut;
 
-const { ensureLoggedIn, ensureLoggedOut } = require('../utils');
+const { ensureLoggedIn } = require('../utils');
 const authRepo = require('../repositories/auth');
 const usersRepo = require('../repositories/users');
 const userVerificationsRepo = require('../repositories/userVerifications');
@@ -21,22 +20,22 @@ router.post('/user/change-password', ensureLoggedIn, async (req, res, next) => {
   try {
     const { id: userId, password: hashedPassword } = req.user;
     const {
-      plainPassword,
       newPlainPassword,
-      repeatedNewPlainPassword
+      plainPassword,
+      repeatedNewPlainPassword,
     } = req.body;
     await authRepo.compareHashedPasswordWithPlainPassword({
       hashedPassword,
-      plainPassword
+      plainPassword,
     });
     authRepo.comparePlainPasswords({
       plainPassword: newPlainPassword,
-      repeatedPlainPassword: repeatedNewPlainPassword
+      repeatedPlainPassword: repeatedNewPlainPassword,
     });
     const newHashedPassword = await authRepo.hashPassword(newPlainPassword);
     await usersRepo.changePassword({
       newHashedPassword,
-      userId
+      userId,
     });
     req.flash(`success`, `Password successfully changed.`);
     res.redirect('/');
@@ -61,7 +60,7 @@ router.post('/user/change-email', ensureLoggedIn, async (req, res, next) => {
     const { newEmail } = req.body;
     await userVerificationsRepo.createUserVerification({
       email: newEmail,
-      userId
+      userId,
     });
     await usersRepo.unverifyUser(userId);
     await usersRepo.changeEmail({ newEmail, userId });
@@ -83,7 +82,7 @@ router.get(
     try {
       const { identifier } = req.params;
       const {
-        userId
+        userId,
       } = await userVerificationsRepo.findUserVerificationByIdentifier(
         identifier
       );

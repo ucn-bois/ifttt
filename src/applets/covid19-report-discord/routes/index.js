@@ -7,7 +7,7 @@ const {
   APPLET_ID,
   AUTH_URL,
   getAccessToken,
-  removeWebhook
+  removeWebhook,
 } = require('../utils');
 const userAppletsRepo = require('../../../repositories/userApplets');
 const cronJobRepo = require('../../../repositories/cronJob');
@@ -22,14 +22,14 @@ router.get(
       try {
         userApplet = await userAppletsRepo.findUserAppletByAppletAndUserId({
           appletId: APPLET_ID,
-          userId
+          userId,
         });
       } catch (err) {
         // Continue without action
       }
       res.render('covid19-report-discord/views/index', {
+        countries,
         userApplet,
-        countries
       });
     } catch (err) {
       next(err);
@@ -74,23 +74,23 @@ router.get(
       const cronJobId = await cronJobRepo.createCronJob({
         expression: `${minute} ${hour} * * *`,
         httpMethod: 'POST',
-        url: `https://ifttt.merys.eu/api/applets/covid19-report-discord/execute/${identifier}`
+        url: `https://ifttt.merys.eu/api/applets/covid19-report-discord/execute/${identifier}`,
       });
       const configuration = JSON.stringify({
+        accessToken: response.access_token,
         country,
+        cronJobId,
+        expires: Date.now() + response.expires_in * 1000,
         hour,
         minute,
-        url: response.webhook.url,
-        accessToken: response.access_token,
         refreshToken: response.refresh_token,
-        expires: Date.now() + response.expires_in * 1000,
-        cronJobId
+        url: response.webhook.url,
       });
       await userAppletsRepo.createUserApplet({
         appletId: APPLET_ID,
-        userId,
         configuration,
-        identifier
+        identifier,
+        userId,
       });
       req.flash(
         'success',
@@ -112,7 +112,7 @@ router.post(
       const userApplet = await userAppletsRepo.findUserAppletByIdentifier(
         identifier
       );
-      const { url, cronJobId } = JSON.parse(userApplet.configuration);
+      const { cronJobId, url } = JSON.parse(userApplet.configuration);
       await removeWebhook(url);
       await cronJobRepo.deleteCronJobById(cronJobId);
       await userAppletsRepo.deleteUserAppletByIdentifier(identifier);

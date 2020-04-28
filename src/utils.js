@@ -5,5 +5,5 @@ const ensureLoggedOut = require('connect-ensure-login').ensureLoggedOut('/');
 
 module.exports = {
   ensureLoggedIn,
-  ensureLoggedOut
+  ensureLoggedOut,
 };

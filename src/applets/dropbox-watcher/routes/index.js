@@ -15,14 +15,14 @@ router.get(
       try {
         userApplet = await userAppletsRepo.findUserAppletByAppletAndUserId({
           appletId: APPLET_ID,
-          userId
+          userId,
         });
       } catch (err) {
         // Do nothing. Continue.
       }
       res.render('dropbox-watcher/views/index', {
         AUTH_URL,
-        userApplet
+        userApplet,
       });
     } catch (err) {
       next(err);
@@ -41,17 +41,17 @@ router.get(
       const {
         access_token: providerAccessToken,
         account_id: accountId,
-        team_id: teamId
+        team_id: teamId,
       } = await exchangeCodeForAccessToken(code);
       await userAppletsRepo.createUserApplet({
         appletId: APPLET_ID,
         configuration: JSON.stringify({
           accountId,
           providerAccessToken,
-          teamId
+          teamId,
         }),
         identifier,
-        userId
+        userId,
       });
       req.flash('success', 'You are subscribed to Dropbox watcher! Great!');
       res.redirect('/');
@@ -70,7 +70,7 @@ router.post(
       const { identifier } = req.params;
       await userAppletsRepo.findUserAppletByIdentifierAndUserId({
         identifier,
-        userId
+        userId,
       });
       await userAppletsRepo.deleteUserAppletByIdentifier(identifier);
       req.flash(

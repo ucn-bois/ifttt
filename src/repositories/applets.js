@@ -1,8 +1,8 @@
 const { db } = require('../clients');
 
-const getApplets = async userId =>
+const getApplets = async (userId) =>
   await db('applets')
-    .leftJoin('userApplets', function() {
+    .leftJoin('userApplets', function () {
       this.on('applets.id', 'userApplets.appletId').on(
         'userApplets.userId',
         userId
@@ -17,5 +17,5 @@ const getApplets = async userId =>
     );
 
 module.exports = {
-  getApplets
+  getApplets,
 };

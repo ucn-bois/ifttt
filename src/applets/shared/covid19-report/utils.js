@@ -186,10 +186,10 @@ const countries = [
   'South Sudan',
   'Western Sahara',
   'Sao Tome and Principe',
-  'Yemen'
+  'Yemen',
 ];
 
-const fetchAndProcessCovid19Data = async country => {
+const fetchAndProcessCovid19Data = async (country) => {
   const response = await axios.get(
     'https://pomber.github.io/covid19/timeseries.json'
   );
@@ -201,5 +201,5 @@ const fetchAndProcessCovid19Data = async country => {
 
 module.exports = {
   countries,
-  fetchAndProcessCovid19Data
+  fetchAndProcessCovid19Data,
 };
