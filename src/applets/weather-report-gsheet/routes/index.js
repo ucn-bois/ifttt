@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const nanoid = require('nanoid');
+const { nanoid } = require('nanoid');
 
 const { ensureLoggedIn } = require('../../../utils');
 const { APPLET_ID } = require('../utils');
@@ -35,27 +35,27 @@ router.post(
     try {
       const { id: userId } = req.user;
       const identifier = nanoid(64);
-      const { hour, minute, city, gsheetUrl } = req.body;
+      const { city, gsheetUrl, hour, minute } = req.body;
       const cronJobId = await cronJobRepo.createCronJob({
         expression: `${minute} ${hour} * * *`,
         httpMethod: 'POST',
-        //https://ifttt.merys.eu/
+        // https://ifttt.merys.eu/
         url: `localhost:3000/api/applets/weather-report-gsheet/execute/${identifier}`
       });
       const spreadsheetId = new RegExp('/spreadsheets/d/([a-zA-Z0-9-_]+)').exec(
         gsheetUrl
       )[1];
       await userAppletsRepo.createUserApplet({
+        appletId: APPLET_ID,
         configuration: JSON.stringify({
+          city,
+          cronJobId,
           hour,
           minute,
-          city,
-          spreadsheetId,
-          cronJobId
+          spreadsheetId
         }),
-        userId,
-        appletId: APPLET_ID,
-        identifier
+        identifier,
+        userId
       });
       req.flash(
         'success',

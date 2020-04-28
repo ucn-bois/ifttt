@@ -9,16 +9,16 @@ const config = {
   output: {
     file: path.join(__dirname, 'public/javascripts/index.min.js'),
     format: 'iife',
-    sourcemap: true
+    sourcemap: true,
   },
   plugins: [
     resolve(),
     commonjs(),
     babel(),
     terser({
-      compress: true
-    })
-  ]
+      compress: true,
+    }),
+  ],
 };
 
 export default config;

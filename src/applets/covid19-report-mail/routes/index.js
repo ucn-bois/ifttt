@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const nanoid = require('nanoid');
+const { nanoid } = require('nanoid');
 
 const { ensureLoggedIn } = require('../../../utils');
 const { countries } = require('../../shared/covid19-report/utils');
@@ -18,14 +18,14 @@ router.get(
       try {
         userApplet = await userAppletsRepo.findUserAppletByAppletAndUserId({
           appletId: APPLET_ID,
-          userId
+          userId,
         });
       } catch (err) {
         // Do nothing. Continue.
       }
       res.render('covid19-report-mail/views/index', {
+        countries,
         userApplet,
-        countries
       });
     } catch (err) {
       next(err);
@@ -44,13 +44,13 @@ router.post(
       const cronJobId = await cronJobRepo.createCronJob({
         expression: `${minute} ${hour} * * *`,
         httpMethod: 'POST',
-        url: `https://ifttt.merys.eu/api/applets/covid19-report-mail/execute/${identifier}`
+        url: `https://ifttt.merys.eu/api/applets/covid19-report-mail/execute/${identifier}`,
       });
       await userAppletsRepo.createUserApplet({
         appletId: APPLET_ID,
         configuration: JSON.stringify({ country, cronJobId, hour, minute }),
         identifier,
-        userId
+        userId,
       });
       req.flash(
         'success',
@@ -71,10 +71,10 @@ router.post(
       const { id: userId } = req.user;
       const { identifier } = req.params;
       const {
-        configuration
+        configuration,
       } = await userAppletsRepo.findUserAppletByIdentifierAndUserId({
         identifier,
-        userId
+        userId,
       });
       const { cronJobId } = JSON.parse(configuration);
       await cronJobRepo.deleteCronJobById(cronJobId);

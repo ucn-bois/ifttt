@@ -1,7 +1,7 @@
 const router = require('express').Router();
 
 const {
-  fetchAndProcessCovid19Data
+  fetchAndProcessCovid19Data,
 } = require('../../shared/covid19-report/utils');
 const { sendDiscordMessage } = require('../utils');
 const userAppletsRepo = require('../../../repositories/userApplets');
@@ -16,7 +16,7 @@ router.post(
       );
       const { country, url } = JSON.parse(userApplet.configuration);
       const data = await fetchAndProcessCovid19Data(country);
-      await sendDiscordMessage({ url, country, content: data });
+      await sendDiscordMessage({ content: data, country, url });
     } catch (err) {
       next(err);
     }

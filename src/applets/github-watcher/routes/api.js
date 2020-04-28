@@ -8,7 +8,7 @@ router.post(
     try {
       const { identifier } = req.params;
       res.status(200).send('Webhook received.');
-      await sendMail({ identifier, body: req.body });
+      await sendMail({ body: req.body, identifier });
     } catch (err) {
       next(err);
     }

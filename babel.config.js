@@ -8,9 +8,9 @@ module.exports = {
         corejs: 3,
         modules: false,
         targets: {
-          ie: 11
-        }
-      }
-    ]
-  ]
+          ie: 11,
+        },
+      },
+    ],
+  ],
 };

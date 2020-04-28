@@ -1,14 +1,14 @@
 const axios = require('axios');
 const createError = require('http-errors');
 
-const createCronJob = async additionalData => {
+const createCronJob = async (additionalData) => {
   const response = await axios({
-    method: 'POST',
-    url: 'https://www.setcronjob.com/api/cron.add',
     data: {
       ...additionalData,
-      token: process.env.SETCRONJOB_API_KEY
-    }
+      token: process.env.SETCRONJOB_API_KEY,
+    },
+    method: 'POST',
+    url: 'https://www.setcronjob.com/api/cron.add',
   });
   const { data, message } = response.data;
   if (message) {
@@ -17,14 +17,14 @@ const createCronJob = async additionalData => {
   return data.id;
 };
 
-const deleteCronJobById = async cronJobId => {
+const deleteCronJobById = async (cronJobId) => {
   const response = await axios({
-    method: 'DELETE',
-    url: 'https://www.setcronjob.com/api/cron.delete',
     data: {
       id: cronJobId,
-      token: process.env.SETCRONJOB_API_KEY
-    }
+      token: process.env.SETCRONJOB_API_KEY,
+    },
+    method: 'DELETE',
+    url: 'https://www.setcronjob.com/api/cron.delete',
   });
   const { message } = response.data;
   if (message) {
@@ -34,5 +34,5 @@ const deleteCronJobById = async cronJobId => {
 
 module.exports = {
   createCronJob,
-  deleteCronJobById
+  deleteCronJobById,
 };

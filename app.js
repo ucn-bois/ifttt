@@ -15,9 +15,9 @@ const session = require('express-session');
 const RedisStore = require('connect-redis')(session);
 
 const {
-  deserializeUser,
   PassportLocalStrategy,
-  serializeUser
+  deserializeUser,
+  serializeUser,
 } = require('./src/repositories/passport');
 
 passport.use(PassportLocalStrategy);
@@ -30,7 +30,7 @@ const redisClient = redis.createClient();
 app.set('trust proxy', true);
 app.set('views', [
   path.join(__dirname, 'src/views'),
-  path.join(__dirname, 'src/applets')
+  path.join(__dirname, 'src/applets'),
 ]);
 app.set('view engine', 'pug');
 app.use(express.static(path.join(__dirname, 'public')));
@@ -46,7 +46,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     secret: process.env.SECRET,
-    store: new RedisStore({ client: redisClient })
+    store: new RedisStore({ client: redisClient }),
   })
 );
 app.use(passport.initialize());
@@ -57,8 +57,8 @@ app.use(require('./src/applets/covid19-report-discord/routes/api'));
 app.use(require('./src/applets/covid19-report-mail/routes/api'));
 app.use(require('./src/applets/dropbox-watcher/routes/api'));
 app.use(require('./src/applets/github-watcher/routes/api'));
-app.use(require('./src/applets/weather-report-mail/routes/api'));
 app.use(require('./src/applets/weather-report-gsheet/routes/api'));
+app.use(require('./src/applets/weather-report-mail/routes/api'));
 
 // Enforce CSRF protection
 app.use(csrf({ cookie: true }));
@@ -76,8 +76,8 @@ app.use(require('./src/applets/covid19-report-discord/routes'));
 app.use(require('./src/applets/covid19-report-mail/routes'));
 app.use(require('./src/applets/dropbox-watcher/routes'));
 app.use(require('./src/applets/github-watcher/routes'));
-app.use(require('./src/applets/weather-report-mail/routes'));
 app.use(require('./src/applets/weather-report-gsheet/routes'));
+app.use(require('./src/applets/weather-report-mail/routes'));
 
 // 404 Handler
 app.use((req, res, next) => {

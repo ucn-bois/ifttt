@@ -5,20 +5,20 @@ const { db } = require('../clients');
 const changeEmail = async ({ newEmail, userId }) =>
   await db('users')
     .where({
-      id: userId
+      id: userId,
     })
     .update({
       email: newEmail,
-      isVerified: false
+      isVerified: false,
     });
 
 const changePassword = async ({ newHashedPassword, userId }) => {
   await db('users')
     .where({
-      id: userId
+      id: userId,
     })
     .update({
-      password: newHashedPassword
+      password: newHashedPassword,
     });
 };
 
@@ -26,38 +26,30 @@ const createUser = async ({ email, hashedPassword, username }) =>
   await db('users').insert({
     email,
     password: hashedPassword,
-    username
+    username,
   });
 
-const findUserById = async userId => {
-  const user = await db('users')
-    .where({ id: userId })
-    .first();
+const findUserById = async (userId) => {
+  const user = await db('users').where({ id: userId }).first();
   if (!user) {
     throw createError(404, `User with id ${userId} does not exist.`);
   }
   return user;
 };
 
-const findUserByUsername = async username => {
-  const user = await db('users')
-    .where({ username })
-    .first();
+const findUserByUsername = async (username) => {
+  const user = await db('users').where({ username }).first();
   if (!user) {
     throw createError(404, `User with username ${username} does not exist.`);
   }
   return user;
 };
 
-const verifyUser = async userId =>
-  await db('users')
-    .where({ id: userId })
-    .update({ isVerified: true });
+const verifyUser = async (userId) =>
+  await db('users').where({ id: userId }).update({ isVerified: true });
 
-const unverifyUser = async userId =>
-  await db('users')
-    .where({ id: userId })
-    .update({ isVerified: false });
+const unverifyUser = async (userId) =>
+  await db('users').where({ id: userId }).update({ isVerified: false });
 
 module.exports = {
   changeEmail,
@@ -65,6 +57,6 @@ module.exports = {
   createUser,
   findUserById,
   findUserByUsername,
+  unverifyUser,
   verifyUser,
-  unverifyUser
 };
