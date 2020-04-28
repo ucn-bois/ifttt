@@ -8,7 +8,9 @@ const {
   exchangeCodeForAccessToken,
   createWebhook,
   removeWebhook,
-  validateRepoName
+  validationResults,
+  validateRepoName,
+  validateRepoOwnerName
 } = require('../utils');
 const userAppletsRepo = require('../../../repositories/userApplets');
 
@@ -39,11 +41,12 @@ router.get(
 router.post(
   '/applets/github-watcher/authorize',
   ensureLoggedIn,
+  [validateRepoOwnerName, validateRepoName],
   async (req, res, next) => {
     try {
-      const { repository } = req.body;
-      validateRepoName(repository);
-      res.redirect(`${AUTH_URL}/${repository}`);
+      validationResults(req);
+      const { repository, repositoryOwner } = req.body;
+      res.redirect(`${AUTH_URL}/${repositoryOwner}/${repository}`);
     } catch (err) {
       next(err);
     }

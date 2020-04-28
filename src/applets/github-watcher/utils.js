@@ -1,5 +1,6 @@
 const axios = require('axios');
 const createError = require('http-errors');
+const { check, body, validationResult } = require('express-validator');
 
 const { sg } = require('../../clients');
 
@@ -18,30 +19,6 @@ const AUTH_URL = [
   `&scope=${SCOPES}`,
   `&redirect_uri=${REDIRECT_URI}`
 ].join('');
-
-const exchangeCodeForAccessToken = async code => {
-  let response;
-  try {
-    response = await axios.post(
-      'https://github.com/login/oauth/access_token',
-      undefined,
-      {
-        params: {
-          client_id: CLIENT_ID,
-          client_secret: CLIENT_SECRET,
-          code: code,
-          redirect_uri: REDIRECT_URI
-        },
-        headers: {
-          Accept: 'application/json'
-        }
-      }
-    );
-  } catch (err) {
-    throw createError(500, err);
-  }
-  return response.data;
-};
 
 const createWebhook = async ({ repository, accessToken, identifier }) => {
   let response;
@@ -70,6 +47,30 @@ const createWebhook = async ({ repository, accessToken, identifier }) => {
   return response.data;
 };
 
+const exchangeCodeForAccessToken = async code => {
+  let response;
+  try {
+    response = await axios.post(
+      'https://github.com/login/oauth/access_token',
+      undefined,
+      {
+        params: {
+          client_id: CLIENT_ID,
+          client_secret: CLIENT_SECRET,
+          code: code,
+          redirect_uri: REDIRECT_URI
+        },
+        headers: {
+          Accept: 'application/json'
+        }
+      }
+    );
+  } catch (err) {
+    throw createError(500, err);
+  }
+  return response.data;
+};
+
 const removeWebhook = async ({ repository, hookId, accessToken }) => {
   try {
     await axios.delete(
@@ -82,15 +83,6 @@ const removeWebhook = async ({ repository, hookId, accessToken }) => {
     );
   } catch (err) {
     throw createError(500, err);
-  }
-};
-
-const validateRepoName = repoName => {
-  const pattern = /\u002F/g; // searches for '/' in a string
-  const match = repoName.match(pattern); // returns an array of matched characters -> "owner/repo" = ["/"]; "owner/repo/hook" = ["/", "/"]; "owner+repo" = null
-  console.log(match);
-  if (match == null || match.length !== 1) {
-    throw createError(500, 'Invalid repository name format');
   }
 };
 
@@ -116,12 +108,47 @@ const sendMail = async ({ identifier, body }) => {
   }
 };
 
+const validationResults = req => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const error = errors.array({ onlyFirstError: true })['0'].msg;
+    throw createError(400, error);
+  }
+};
+
+// const validateRepoName = repoName => {
+//   const pattern = /\u002F/g; // searches for '/' in a string
+//   const match = repoName.match(pattern); // returns an array of matched characters -> "owner/repo" = ["/"]; "owner/repo/hook" = ["/", "/"]; "owner+repo" = null
+//   console.log(match);
+//   if (match == null || match.length !== 1) {
+//     throw createError(500, 'Invalid repository name format');
+//   }
+// };
+// TODO test validation, fix if not working, validate dropbox as well
+// repo name validation: max chars - 100, '-' and '_' allowed from special characters, numbers allowed
+const validateRepoName = check('repository')
+  .isLength({ max: 100 })
+  .withMessage('Repository name is too long. (Maximum 100 characters allowed)')
+  .matches('^([A-Za-z0-9-_])+')
+  .withMessage('Repository name contains illegal characters.');
+
+// user name validation: max chars - 39,only '-' allowed from special characters, numbers allowed
+const validateRepoOwnerName = check('repositoryOwner')
+  .isLength({ max: 39 })
+  .withMessage(
+    'The repository owner name is too long. (Maximum 39 characters allowed)'
+  )
+  .matches('^([A-Za-z0-9-])+')
+  .withMessage('Repository owner name contains illegal characters.');
+
 module.exports = {
   APPLET_ID,
   AUTH_URL,
-  exchangeCodeForAccessToken,
   createWebhook,
+  exchangeCodeForAccessToken,
   removeWebhook,
+  sendMail,
+  validationResults,
   validateRepoName,
-  sendMail
+  validateRepoOwnerName
 };
