@@ -1,0 +1,1 @@
+INSERT INTO ifttt.applets (id, name, description, homepage) VALUES (5, 'Weather Mail Report', 'Get the current weather delivered to your inbox every day', '/applets/weather-report-mail');
