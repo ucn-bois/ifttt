@@ -116,15 +116,6 @@ const validationResults = req => {
   }
 };
 
-// const validateRepoName = repoName => {
-//   const pattern = /\u002F/g; // searches for '/' in a string
-//   const match = repoName.match(pattern); // returns an array of matched characters -> "owner/repo" = ["/"]; "owner/repo/hook" = ["/", "/"]; "owner+repo" = null
-//   console.log(match);
-//   if (match == null || match.length !== 1) {
-//     throw createError(500, 'Invalid repository name format');
-//   }
-// };
-// TODO test validation, fix if not working, validate dropbox as well
 // repo name validation: max chars - 100, '-' and '_' allowed from special characters, numbers allowed
 const validateRepoName = check('repository')
   .isLength({ max: 100 })

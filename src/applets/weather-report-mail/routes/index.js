@@ -2,7 +2,7 @@ const router = require('express').Router();
 const nanoid = require('nanoid');
 
 const { ensureLoggedIn } = require('../../../utils');
-const { APPLET_ID } = require('../utils');
+const { APPLET_ID, validateCity, validationResults } = require('../utils');
 const userAppletsRepo = require('../../../repositories/userApplets');
 const cronJobRepo = require('../../../repositories/cronJob');
 
@@ -31,24 +31,26 @@ router.get(
 router.post(
   '/applets/weather-report-mail/subscribe',
   ensureLoggedIn,
+  [validateCity],
   async (req, res, next) => {
     try {
-      const { id: userId } = req.user;
-      const identifier = nanoid(64);
-      const { hour, minute, city } = req.body;
-      const cronJobId = await cronJobRepo.createCronJob({
-        expression: `${minute} ${hour} * * *`,
-        httpMethod: 'POST',
-        url: `https://ifttt.merys.eu/api/applets/weather-report-mail/execute/${identifier}`
-      });
-      await userAppletsRepo.createUserApplet({
-        configuration: JSON.stringify({ hour, minute, city, cronJobId }),
-        userId,
-        appletId: APPLET_ID,
-        identifier
-      });
-      req.flash('success', 'Successfully subscribed to mail weather report.');
-      res.redirect('/applets/weather-report-mail');
+      validationResults(req);
+      // const { id: userId } = req.user;
+      // const identifier = nanoid(64);
+      // const { hour, minute, city } = req.body;
+      // const cronJobId = await cronJobRepo.createCronJob({
+      //   expression: `${minute} ${hour} * * *`,
+      //   httpMethod: 'POST',
+      //   url: `https://ifttt.merys.eu/api/applets/weather-report-mail/execute/${identifier}`
+      // });
+      // await userAppletsRepo.createUserApplet({
+      //   configuration: JSON.stringify({ hour, minute, city, cronJobId }),
+      //   userId,
+      //   appletId: APPLET_ID,
+      //   identifier
+      // });
+      // req.flash('success', 'Successfully subscribed to mail weather report.');
+      // res.redirect('/applets/weather-report-mail');
     } catch (err) {
       next(err);
     }

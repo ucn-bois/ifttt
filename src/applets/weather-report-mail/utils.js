@@ -1,9 +1,15 @@
 const axios = require('axios');
 const moment = require('moment-timezone');
+const createError = require('http-errors');
+const { check, validationResult } = require('express-validator');
 
 const { sg } = require('../../clients');
 
 const APPLET_ID = 5;
+
+const convertTimestampToTime = (ts, tz) => {
+  return moment.tz(ts * 1000, tz).format('HH:mm');
+};
 
 const fetchWeatherData = async city => {
   const response = await axios.get(
@@ -42,12 +48,24 @@ const sendMail = async (email, data) => {
   });
 };
 
-const convertTimestampToTime = (ts, tz) => {
-  return moment.tz(ts * 1000, tz).format('HH:mm');
+const validateCity = check('city')
+  .isLength({ max: 50 })
+  .withMessage('City name too long.')
+  .isAlpha()
+  .withMessage('Illegal characters in the city name.');
+
+const validationResults = req => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const error = errors.array({ onlyFirstError: true })['0'].msg;
+    throw createError(400, error);
+  }
 };
 
 module.exports = {
   APPLET_ID,
   fetchWeatherData,
-  sendMail
+  sendMail,
+  validateCity,
+  validationResults
 };
