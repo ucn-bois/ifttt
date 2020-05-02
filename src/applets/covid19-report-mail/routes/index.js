@@ -4,6 +4,7 @@ const { nanoid } = require('nanoid');
 const { ensureLoggedIn } = require('../../../utils');
 const { countries } = require('../../shared/covid19-report/utils');
 const cronJobRepo = require('../../../repositories/cronJob');
+const appletsRepo = require('../../../repositories/applets');
 const userAppletsRepo = require('../../../repositories/userApplets');
 
 const APPLET_ID = 1;
@@ -14,16 +15,14 @@ router.get(
   async (req, res, next) => {
     try {
       const { id: userId } = req.user;
-      let userApplet;
-      try {
-        userApplet = await userAppletsRepo.findUserAppletByAppletAndUserId({
-          appletId: APPLET_ID,
-          userId,
-        });
-      } catch (err) {
-        // Do nothing. Continue.
-      }
+      const applet = await appletsRepo.getAppletById(APPLET_ID);
+      const userApplet = await userAppletsRepo.findUserAppletByAppletAndUserId({
+        appletId: APPLET_ID,
+        shouldThrow: false,
+        userId,
+      });
       res.render('covid19-report-mail/views/index', {
+        applet,
         countries,
         userApplet,
       });

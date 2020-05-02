@@ -1,75 +1,68 @@
 const router = require('express').Router();
-const signOutRequired = require('connect-ensure-login').ensureLoggedOut;
 
-const { ensureLoggedIn } = require('../utils');
+const { ensureLoggedIn, ensureVerified } = require('../utils');
 const authRepo = require('../repositories/auth');
 const usersRepo = require('../repositories/users');
 const userVerificationsRepo = require('../repositories/userVerifications');
 
 /**
- * [GET] Change password
- */
-router.get('/user/change-password', ensureLoggedIn, (req, res) => {
-  res.render('user/change-password');
-});
-
-/**
  * [POST] Change password
  */
-router.post('/user/change-password', ensureLoggedIn, async (req, res, next) => {
-  try {
-    const { id: userId, password: hashedPassword } = req.user;
-    const {
-      newPlainPassword,
-      plainPassword,
-      repeatedNewPlainPassword,
-    } = req.body;
-    await authRepo.compareHashedPasswordWithPlainPassword({
-      hashedPassword,
-      plainPassword,
-    });
-    authRepo.comparePlainPasswords({
-      plainPassword: newPlainPassword,
-      repeatedPlainPassword: repeatedNewPlainPassword,
-    });
-    const newHashedPassword = await authRepo.hashPassword(newPlainPassword);
-    await usersRepo.changePassword({
-      newHashedPassword,
-      userId,
-    });
-    req.flash(`success`, `Password successfully changed.`);
-    res.redirect('/');
-  } catch (err) {
-    next(err);
+router.post(
+  '/user/change-password',
+  [ensureLoggedIn, ensureVerified],
+  async (req, res, next) => {
+    try {
+      const { id: userId, password: hashedPassword } = req.user;
+      const {
+        newPlainPassword,
+        plainPassword,
+        repeatedNewPlainPassword,
+      } = req.body;
+      await authRepo.compareHashedPasswordWithPlainPassword({
+        hashedPassword,
+        plainPassword,
+      });
+      authRepo.comparePlainPasswords({
+        plainPassword: newPlainPassword,
+        repeatedPlainPassword: repeatedNewPlainPassword,
+      });
+      const newHashedPassword = await authRepo.hashPassword(newPlainPassword);
+      await usersRepo.changePassword({
+        newHashedPassword,
+        userId,
+      });
+      req.flash(`success`, `Password successfully changed.`);
+      res.redirect('/');
+    } catch (err) {
+      next(err);
+    }
   }
-});
-
-/**
- * [GET] Change email
- */
-router.get('/user/change-email', ensureLoggedIn, (req, res) => {
-  res.render('user/change-email');
-});
+);
 
 /**
  * [POST] Change email
  */
-router.post('/user/change-email', ensureLoggedIn, async (req, res, next) => {
-  try {
-    const { id: userId } = req.user;
-    const { newEmail } = req.body;
-    await userVerificationsRepo.createUserVerification({
-      email: newEmail,
-      userId,
-    });
-    await usersRepo.unverifyUser(userId);
-    await usersRepo.changeEmail({ newEmail, userId });
-    req.flash(`success`, `Email successfully changed`);
-    res.redirect('/');
-  } catch (err) {
-    next(err);
+router.post(
+  '/user/change-email',
+  [ensureLoggedIn, ensureVerified],
+  async (req, res, next) => {
+    try {
+      const { id: userId } = req.user;
+      const { newEmail } = req.body;
+      await userVerificationsRepo.createUserVerification({
+        email: newEmail,
+        userId,
+      });
+      await usersRepo.unverifyUser(userId);
+      await usersRepo.changeEmail({ newEmail, userId });
+      req.flash(`success`, `Email successfully changed`);
+      res.redirect('/');
+    } catch (err) {
+      next(err);
+    }
   }
-});
+);
 
 /**
  * [GET] Verify email
@@ -96,6 +89,18 @@ router.get(
   }
 );
 
-router.get('/test', signOutRequired('/'), (req, res) => res.send('Ok'));
+/**
+ * [GET] Locked account
+ */
+router.get('/user/locked', ensureLoggedIn, (req, res) => {
+  if (req.user.isVerified) {
+    return res.redirect('/');
+  }
+  res.render('user/locked', {
+    seo: {
+      title: 'IFTTT | Account locked',
+    },
+  });
+});
 
 module.exports = router;

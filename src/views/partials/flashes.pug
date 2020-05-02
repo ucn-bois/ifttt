@@ -1,3 +1,9 @@
 if flashes
-  each flash, type in flashes
-    p Message: #{flash} | Type: #{type}
+  .ifttt-toast-wrapper
+    each flash, type in flashes
+      .toast.ifttt-toast
+        .toast-header
+          small.ml-auto.mr-2 just now
+          button.close(type='button', data-dismiss='toast')
+            span &times;
+        .toast-body= flash

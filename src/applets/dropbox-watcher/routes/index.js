@@ -3,6 +3,7 @@ const { nanoid } = require('nanoid');
 
 const { ensureLoggedIn } = require('../../../utils');
 const { APPLET_ID, AUTH_URL, exchangeCodeForAccessToken } = require('../utils');
+const appletsRepo = require('../../../repositories/applets');
 const userAppletsRepo = require('../../../repositories/userApplets');
 
 router.get(
@@ -11,16 +12,14 @@ router.get(
   async (req, res, next) => {
     try {
       const { id: userId } = req.user;
-      let userApplet;
-      try {
-        userApplet = await userAppletsRepo.findUserAppletByAppletAndUserId({
-          appletId: APPLET_ID,
-          userId,
-        });
-      } catch (err) {
-        // Do nothing. Continue.
-      }
+      const applet = await appletsRepo.getAppletById(APPLET_ID);
+      const userApplet = await userAppletsRepo.findUserAppletByAppletAndUserId({
+        appletId: APPLET_ID,
+        shouldThrow: false,
+        userId,
+      });
       res.render('dropbox-watcher/views/index', {
+        applet,
         AUTH_URL,
         userApplet,
       });
@@ -54,7 +53,7 @@ router.get(
         userId,
       });
       req.flash('success', 'You are subscribed to Dropbox watcher! Great!');
-      res.redirect('/');
+      res.redirect('/applets/dropbox-watcher');
     } catch (err) {
       next(err);
     }
@@ -77,7 +76,7 @@ router.post(
         'success',
         'You just unsubscribed to Dropbox watcher applet. Too bad!'
       );
-      res.redirect('/');
+      res.redirect('/applets/dropbox-watcher');
     } catch (err) {
       next(err);
     }

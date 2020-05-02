@@ -5,7 +5,11 @@ module.exports = (req, res, next) => {
     csrfToken: req.csrfToken(),
     flashes: req.flash(),
     fullUrl: `${req.protocol}://${req.headers.host + req.url}`,
-    user: req.user,
+    user: {
+      authenticated: req.user,
+      verified: req.user && req.user.isVerified,
+      ...req.user,
+    },
   };
   next();
 };

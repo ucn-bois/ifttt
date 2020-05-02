@@ -1,0 +1,10 @@
+mixin applet(applet)
+  .card.h-100
+    .card-header
+      div= applet.name
+      if applet.subscribed
+        small.badge.badge-primary You are subscribed
+    .card-body
+      .card-text= applet.description
+    .card-footer
+      a.btn.btn-primary(href=applet.homepage) Details

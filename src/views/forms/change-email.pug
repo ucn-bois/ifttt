@@ -1,0 +1,13 @@
+#changeEmailModal.modal.fade(tabindex='-1')
+  .modal-dialog.modal-dialog-centered
+    form.modal-content(action=`/user/change-email`, method='POST')
+      .modal-header
+        h5.modal-title Change email
+      .modal-body
+        input(type='hidden', name='_csrf', value=csrfToken)
+        .form-group
+          label(for='newEmail') New email
+          input#newEmail.form-control(type='text', name='newEmail', required)
+      .modal-footer
+        button.btn.btn-secondary(type='button', data-dismiss='modal') Close
+        button.btn.btn-primary(type='submit') Confirm

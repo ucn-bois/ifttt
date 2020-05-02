@@ -1,1 +1,38 @@
-header Header
+if !user.authenticated || user.authenticated && user.verified
+  header
+    nav.navbar.navbar-expand-lg.navbar-light.bg-light.border-bottom
+      .container
+        a.navbar-brand.text-primary.text-monospace.font-weight-bolder.ifttt-logo(
+          href='/'
+        ) IFTTT
+        button.navbar-toggler(
+          type='button',
+          data-toggle='collapse',
+          data-target='#navbar'
+        )
+          span.navbar-toggler-icon
+        #navbar.collapse.navbar-collapse.justify-content-end
+          ul.navbar-nav
+            if user.authenticated
+              li.nav-item.mr-2
+                a.nav-link(href='/') Browse apps
+              li.nav-item.dropdown
+                a.nav-link.dropdown-toggle(href='#', data-toggle='dropdown')
+                  i.fas.fa-user-circle.fa-lg
+                .dropdown-menu
+                  button.dropdown-item(
+                    type='button',
+                    data-toggle='modal',
+                    data-target='#changePasswordModal'
+                  ) Change password
+                  button.dropdown-item(
+                    type='button',
+                    data-toggle='modal',
+                    data-target='#changeEmailModal'
+                  ) Change email
+                  a.dropdown-item(href='/auth/sign-out') Sign out
+            else
+              li.nav-item.mr-2
+                a.nav-link(href='/auth/sign-in') Sign in
+              li.nav-item
+                a.btn.btn-primary(href='/auth/sign-up') Sign up

@@ -18,11 +18,15 @@ const createUserApplet = async ({
 const deleteUserAppletByIdentifier = async (identifier) =>
   await db('userApplets').where({ identifier }).delete();
 
-const findUserAppletByAppletAndUserId = async ({ appletId, userId }) => {
+const findUserAppletByAppletAndUserId = async ({
+  appletId,
+  shouldThrow = true,
+  userId,
+}) => {
   const userApplet = await db('userApplets')
     .where({ appletId, userId })
     .first();
-  if (!userApplet) {
+  if (shouldThrow && !userApplet) {
     throw createError(
       404,
       `User applet with appletId ${appletId} and user id ${userId} does not exist.`
