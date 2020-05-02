@@ -55,7 +55,7 @@ router.post(
         'success',
         'You just subscribed to COVID 19 report applet. Nice!'
       );
-      res.redirect('/');
+      res.redirect('/applets/covid19-report-mail');
     } catch (err) {
       next(err);
     }
@@ -82,7 +82,7 @@ router.post(
         'success',
         'You just unsubscribed to COVID 19 report applet. Too bad!'
       );
-      res.redirect('/');
+      res.redirect('/applets/covid19-report-mail');
     } catch (err) {
       next(err);
     }
