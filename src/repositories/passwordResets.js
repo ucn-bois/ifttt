@@ -17,9 +17,12 @@ const createPasswordReset = async ({ email, userId }) => {
   });
 };
 
-const findPasswordResetByIdentifier = async (identifier) => {
+const findPasswordResetByIdentifier = async ({
+  identifier,
+  shouldThrow = true,
+}) => {
   const verification = await db('passwordResets').where({ identifier }).first();
-  if (!verification || !verification.pending) {
+  if (shouldThrow && (!verification || !verification.pending)) {
     throw createError(
       404,
       `Password reset with identifier ${identifier} does not exist or is invalid.`

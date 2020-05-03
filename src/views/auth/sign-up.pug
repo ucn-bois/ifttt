@@ -16,11 +16,19 @@ block content
               input#username.form-control(
                 type='text',
                 name='username',
+                value=utils.getFormFieldValue(form.values, "username"),
                 required
               )
+              +formFieldError(form.errors, 'username')
             .form-group
               label(for='email') Email
-              input#email.form-control(type='email', name='email', required)
+              input#email.form-control(
+                type='email',
+                name='email',
+                value=utils.getFormFieldValue(form.values, "email"),
+                required
+              )
+              +formFieldError(form.errors, 'email')
             .form-group
               label(for='plainPassword') Password
               input#plainPassword.form-control(
@@ -28,6 +36,7 @@ block content
                 name='plainPassword',
                 required
               )
+              +formFieldError(form.errors, 'plainPassword')
             .form-group
               label(for='repeatedPlainPassword') Repeat password
               input#repeatedPlainPassword.form-control(
@@ -35,6 +44,7 @@ block content
                 name='repeatedPlainPassword',
                 required
               )
+              +formFieldError(form.errors, 'repeatedPlainPassword')
             button.btn.btn-block.btn-primary(type='submit') Get started
           .card-footer
             small.d-block Already have an account?

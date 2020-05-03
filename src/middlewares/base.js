@@ -1,4 +1,5 @@
 module.exports = (req, res, next) => {
+  req.session.forms = req.session.forms || {};
   res.locals = {
     ...res.locals,
     baseUrl: `${req.protocol}://${req.headers.host}`,
@@ -9,6 +10,12 @@ module.exports = (req, res, next) => {
       authenticated: req.user,
       verified: req.user && req.user.isVerified,
       ...req.user,
+    },
+    utils: {
+      getFormFieldValue: (formValues, field) => {
+        if (!formValues) return null;
+        return formValues[field];
+      },
     },
   };
   next();

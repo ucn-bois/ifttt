@@ -8,3 +8,7 @@ mixin applet(applet)
       .card-text= applet.description
     .card-footer
       a.btn.btn-primary(href=applet.homepage) Details
+
+mixin formFieldError(formErrors, field)
+  if formErrors && formErrors[field]
+    small.text-danger= formErrors[field]

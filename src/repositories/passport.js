@@ -15,7 +15,7 @@ const deserializeUser = async (userId, done) => {
 const PassportLocalStrategy = new LocalStrategy(
   async (username, password, done) => {
     try {
-      const user = await usersRepo.findUserByUsername(username);
+      const user = await usersRepo.findUserByUsername({ username });
       await authRepo.compareHashedPasswordWithPlainPassword({
         hashedPassword: user.password,
         plainPassword: password,

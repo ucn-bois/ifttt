@@ -29,6 +29,14 @@ const createUser = async ({ email, hashedPassword, username }) =>
     username,
   });
 
+const findUserByEmail = async ({ email, shouldThrow = true }) => {
+  const user = await db('users').where({ email }).first();
+  if (shouldThrow && !user) {
+    throw createError(404, `User with email ${email} does not exist.`);
+  }
+  return user;
+};
+
 const findUserById = async (userId) => {
   const user = await db('users').where({ id: userId }).first();
   if (!user) {
@@ -37,9 +45,9 @@ const findUserById = async (userId) => {
   return user;
 };
 
-const findUserByUsername = async (username) => {
+const findUserByUsername = async ({ shouldThrow = true, username }) => {
   const user = await db('users').where({ username }).first();
-  if (!user) {
+  if (shouldThrow && !user) {
     throw createError(404, `User with username ${username} does not exist.`);
   }
   return user;
@@ -55,6 +63,7 @@ module.exports = {
   changeEmail,
   changePassword,
   createUser,
+  findUserByEmail,
   findUserById,
   findUserByUsername,
   unverifyUser,

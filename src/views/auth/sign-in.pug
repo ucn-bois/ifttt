@@ -16,8 +16,10 @@ block content
               input#username.form-control(
                 type='text',
                 name='username',
+                value=utils.getFormFieldValue(form.values, "username"),
                 required
               )
+              +formFieldError(form.errors, 'username')
             .form-group
               label(for='password') Password
               input#password.form-control(
@@ -25,6 +27,7 @@ block content
                 name='password',
                 required
               )
+              +formFieldError(form.errors, 'password')
             button.btn.btn-primary.btn-block(type='submit') Login
           .card-footer
             small.d-block No account yet?
