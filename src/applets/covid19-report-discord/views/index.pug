@@ -1,25 +1,43 @@
 extends ../../../views/base
 
 block content
-  h1 Discord applet
-  if userApplet
-    - var config = JSON.parse(userApplet.configuration);
-    p You are subscribed to daily reports from #{config.country}
-    form(
-      action=`/applets/covid19-report-discord/unsubscribe/${userApplet.identifier}`,
-      method='POST'
-    )
-      input(type='hidden', name='_csrf', value=csrfToken)
-      button(type='submit') Unsubscribe
-  else
-    form(action='/applets/covid19-report-discord/authorize', method='POST')
-      input(type='hidden', name='_csrf', value=csrfToken)
-      label(for='hour') Hour
-      input#hour(type='number', name='hour', max=24, min=0, required)
-      label(for='minute') Minute
-      input#minute(type='number', name='minute', max=60, min=0, required)
-      label(for='country') Country
-      select(name='country')
-        each country in countries
-          option(value=country) #{country}
-      button(type='submit') Subscribe
+  .container.py-5
+    h1.mb-4= applet.name
+    .row
+      .mb-4.col-lg-3.mb-lg-0
+        .div.list-group
+          a.list-group-item.list-group-item-action.active(href='#description', data-toggle='tab') Description
+          if userApplet
+            form(
+              action=`/applets/covid19-report-discord/unsubscribe/${userApplet.identifier}`,
+              method='POST'
+            )
+              input(type='hidden', name='_csrf', value=csrfToken)
+              button.list-group-item.list-group-item-action(type='submit') Unsubscribe
+          else
+            a.list-group-item.list-group-item-action(href='#covid19ReportDiscordSubscribeModal', data-toggle='modal') Subscribe
+      .col-lg-9
+        .card.tab-content
+          #description.card-body.tab-pane.fade.show.active= applet.description
+
+  #covid19ReportDiscordSubscribeModal.modal.fade(tabindex='-1')
+    .modal-dialog.modal-dialog-centered
+      form.modal-content(action=`/applets/covid19-report-discord/authorize`, method='POST')
+        .modal-header
+          h5.modal-title Subscribe
+        .modal-body
+          input(type='hidden', name='_csrf', value=csrfToken)
+          .form-group
+            label(for='hour') Hour
+            input#hour.form-control(type='number', name='hour', max=24, min=0, required)
+          .form-group
+            label(for='minute') Minute
+            input#minute.form-control(type='number', name='minute', max=60, min=0, required)
+          .form-group
+            label(for='country') Country
+            select#country.form-control(name='country')
+              each country in countries
+                option(value=country) #{country}
+        .modal-footer
+          button.btn.btn-secondary(type='button', data-dismiss='modal') Close
+          button.btn.btn-primary(type='submit') Confirm
