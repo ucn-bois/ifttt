@@ -33,7 +33,7 @@ const validateCredentials = [
     .withMessage(
       'A password needs to have at least one number and one letter and must be between 8 and 50 characters.'
     )
-    .isLength({ min: 8, max: 50 })
+    .isLength({ max: 50, min: 8 })
     .withMessage(
       'A password must be between 8 and 50 characters and needs to have at least one number and one letter.'
     ),
@@ -55,7 +55,7 @@ const credValidationResult = (req) => {
 
 module.exports = {
   compareHashedPasswordWithPlainPassword,
+  credValidationResult,
   hashPassword,
   validateCredentials,
-  credValidationResult,
 };
