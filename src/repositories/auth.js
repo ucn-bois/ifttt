@@ -14,6 +14,12 @@ const compareHashedPasswordWithPlainPassword = async ({
   }
 };
 
+const comparePlainPasswords = ({ plainPassword, repeatedPlainPassword }) => {
+  if (plainPassword !== repeatedPlainPassword) {
+    throw createError(400, 'Passwords do not match.');
+  }
+};
+
 const hashPassword = async (password) => await bcrypt.hash(password, 6);
 
 const validateCredentials = [
@@ -55,6 +61,7 @@ const credValidationResult = (req) => {
 
 module.exports = {
   compareHashedPasswordWithPlainPassword,
+  comparePlainPasswords,
   credValidationResult,
   hashPassword,
   validateCredentials,
