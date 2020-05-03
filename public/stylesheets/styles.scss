@@ -1,0 +1,23 @@
+@import 'variables';
+@import 'clouds';
+
+body {
+  font-family: 'Open Sans', sans-serif;
+}
+
+.ifttt {
+  &-logo {
+    font-size: 1.75rem;
+  }
+  &-fill-height {
+    height: calc(100vh - #{$header-height});
+  }
+  &-toast {
+    min-width: 256px;
+    &-wrapper {
+      bottom: 16px;
+      left: 16px;
+      position: fixed;
+    }
+  }
+}

@@ -3,6 +3,7 @@ const { nanoid } = require('nanoid');
 
 const { ensureLoggedIn } = require('../../../utils');
 const { APPLET_ID } = require('../utils');
+const appletsRepo = require('../../../repositories/applets');
 const userAppletsRepo = require('../../../repositories/userApplets');
 const cronJobRepo = require('../../../repositories/cronJob');
 
@@ -12,16 +13,13 @@ router.get(
   async (req, res, next) => {
     try {
       const { id: userId } = req.user;
-      let userApplet;
-      try {
-        userApplet = await userAppletsRepo.findUserAppletByAppletAndUserId({
-          appletId: APPLET_ID,
-          userId,
-        });
-      } catch (err) {
-        // Well, there is nothing to do here.
-      }
-      res.render('weather-report-mail/views/index', { userApplet });
+      const applet = await appletsRepo.getAppletById(APPLET_ID);
+      const userApplet = await userAppletsRepo.findUserAppletByAppletAndUserId({
+        appletId: APPLET_ID,
+        shouldThrow: false,
+        userId,
+      });
+      res.render('weather-report-mail/views/index', { applet, userApplet });
     } catch (err) {
       next(err);
     }

@@ -1,0 +1,80 @@
+$duration: 120s;
+$height: 36px;
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes float {
+  from { transform: translateX(100%) translateZ(0); }
+  to { transform: translateX(-15%) translateZ(0); }
+}
+
+@keyframes fade-in-float {
+  0%, 100% { opacity: 0; }
+  5%, 90% { opacity: 1; }
+}
+
+@mixin loop($delay, $count) {
+  @for $i from 1 through $count {
+    .cloud:nth-child(#{$i}) {
+      animation-delay: ($delay * $i);
+      top: percentage(random(100) / 100);
+
+    }
+    .cloud-in-front:nth-child(#{$i}) {
+      animation-duration: ($duration - ($i * 4));
+      height: ($height + ($i * 2.5));
+    }
+    .cloud-in-back:nth-child(#{$i}) {
+      animation-duration: ($duration * 1.25 - ($i * 4));
+      height: (($height / 1.1) - ($i * 1.25));
+    }
+  }
+}
+
+@include loop(($duration / 6.5 ) * -1, 20);
+
+.cloud {
+  animation-duration: $duration;
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+  animation-name: float, fade-in-float;
+  animation-timing-function: linear;
+  background-image: url('/images/cloud.png');
+  background-repeat: no-repeat;
+  background-size: auto 100%;
+  position: absolute;
+  width: 100%;
+  z-index: 0;
+
+  &-wrapper {
+    animation: fade-in 3s ease-out;
+    bottom: 0;
+    height: 100%;
+    left: 0;
+    margin: auto;
+    overflow: hidden;
+    position: fixed;
+    right: 0;
+    top: 0;
+    user-select: none;
+    z-index: -1;
+  }
+
+  &-in-front {
+    max-height: 36px;
+    min-height: 24px;
+    z-index: 1;
+  }
+
+  &-in-back {
+    animation-duration: $duration * 1.75;
+    background-image: url('/images/cloud-smaller.png');
+    height: $height / 1.2;
+    max-height: 24px;
+    min-height: 16px;
+  }
+
+}

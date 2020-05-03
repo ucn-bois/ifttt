@@ -1,12 +1,12 @@
 const bcrypt = require('bcrypt');
 const createError = require('http-errors');
-const { check, body, validationResult } = require('express-validator');
+const { body, check, validationResult } = require('express-validator');
 
 const { db } = require('../clients');
 
 const compareHashedPasswordWithPlainPassword = async ({
   hashedPassword,
-  plainPassword
+  plainPassword,
 }) => {
   const match = await bcrypt.compare(plainPassword, hashedPassword);
   if (!match) {
@@ -14,17 +14,15 @@ const compareHashedPasswordWithPlainPassword = async ({
   }
 };
 
-const hashPassword = async password => await bcrypt.hash(password, 6);
+const hashPassword = async (password) => await bcrypt.hash(password, 6);
 
 const validateCredentials = [
   // email check - checks if an account exists with the provided email
   check('email')
     .isEmail()
     .withMessage('Invalid email format')
-    .custom(async email => {
-      const user = await db('users')
-        .where({ email })
-        .first();
+    .custom(async (email) => {
+      const user = await db('users').where({ email }).first();
       if (user) {
         return Promise.reject('An account with this email already exists.');
       }
@@ -35,7 +33,7 @@ const validateCredentials = [
     .withMessage(
       'A password needs to have at least one number and one letter and must be between 8 and 50 characters.'
     )
-    .isLength({ min: 8, max: 50 })
+    .isLength({ max: 50, min: 8 })
     .withMessage(
       'A password must be between 8 and 50 characters and needs to have at least one number and one letter.'
     ),
@@ -44,10 +42,10 @@ const validateCredentials = [
     .custom((repeatedPassword, { req }) => {
       return repeatedPassword === req.body.plainPassword;
     })
-    .withMessage('Passwords do not match.')
+    .withMessage('Passwords do not match.'),
 ];
 
-const credValidationResult = req => {
+const credValidationResult = (req) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const error = errors.array({ onlyFirstError: true })['0'].msg;
@@ -57,7 +55,7 @@ const credValidationResult = req => {
 
 module.exports = {
   compareHashedPasswordWithPlainPassword,
+  credValidationResult,
   hashPassword,
   validateCredentials,
-  credValidationResult
 };

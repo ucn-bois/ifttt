@@ -1,16 +1,37 @@
 extends ../base
 
 block content
-  form(action='/auth/sign-in', method='POST')
-    input(type='hidden', name='_csrf', value=csrfToken)
-    label(for='username') Username
-    input#username(type='text', name='username', required)
-    label(for='password') Password
-    input#password(type='password', name='password', required)
-    button(type='submit') Login
-  p No account yet?
-    |
-    |
-    a(href='/auth/sign-up') Register now
-  p
-    a(href='/auth/forgotten-password') Forgot your password?
+  main.container
+    .row.ifttt-fill-height
+      .col-lg-7.d-lg-flex.flex-lg-column.justify-content-lg-center.d-none
+        h1.display-3.font-weight-bolder Connecting your apps together
+        h4.text-muted Easy automation for busy people. It's awesome. Be lazy. Sign up today and start automating.
+      .col-lg-4.offset-lg-1.d-flex.flex-column.justify-content-center
+        form.card(action='/auth/sign-in', method='POST')
+          .card-header Sign in
+          .card-body
+            input(type='hidden', name='_csrf', value=csrfToken)
+            .form-group
+              label(for='username') Username
+              input#username.form-control(
+                type='text',
+                name='username',
+                required
+              )
+            .form-group
+              label(for='password') Password
+              input#password.form-control(
+                type='password',
+                name='password',
+                required
+              )
+            button.btn.btn-primary.btn-block(type='submit') Login
+          .card-footer
+            small.d-block No account yet?
+              |
+              |
+              a(href='/auth/sign-up') Register now
+            small.d-block Forgot your password?
+              |
+              |
+              a(href='/auth/forgotten-password') Reset it here

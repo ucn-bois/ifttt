@@ -1,0 +1,8 @@
+extends ../base
+
+block content
+  .container.py-5
+    .row
+      each applet in applets
+        .col-sm-6.col-md-4.col-lg-3.mb-4
+          +applet(applet)

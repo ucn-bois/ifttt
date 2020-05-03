@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const passport = require('passport');
-const { check, validationResult } = require('express-validator');
 
 const { ensureLoggedIn, ensureLoggedOut } = require('../utils');
 const authRepo = require('../repositories/auth');
@@ -11,9 +10,13 @@ const passwordResetsRepo = require('../repositories/passwordResets');
 /**
  * [GET] Sign in
  */
-router.get('/auth/sign-in', ensureLoggedOut, (req, res) => {
-  res.render('auth/sign-in');
-});
+router.get('/auth/sign-in', ensureLoggedOut, (req, res) =>
+  res.render('auth/sign-in', {
+    seo: {
+      title: 'IFTTT | Sign in',
+    },
+  })
+);
 
 /**
  * [POST] Sign in
@@ -23,7 +26,7 @@ router.post(
   ensureLoggedOut,
   passport.authenticate('local', {
     failureRedirect: '/auth/sign-in',
-    successRedirect: '/'
+    successRedirect: '/',
   })
 );
 
@@ -31,7 +34,11 @@ router.post(
  * [GET] Sign up
  */
 router.get('/auth/sign-up', ensureLoggedOut, (req, res) =>
-  res.render('auth/sign-up')
+  res.render('auth/sign-up', {
+    seo: {
+      title: 'IFTTT | Sign up',
+    },
+  })
 );
 
 /**
@@ -42,15 +49,16 @@ router.post('/auth/sign-up', ensureLoggedOut, async (req, res, next) => {
     const { email, plainPassword, repeatedPlainPassword, username } = req.body;
     authRepo.comparePlainPasswords({
       plainPassword,
-      repeatedPlainPassword
+      repeatedPlainPassword,
     });
     await usersRepo.createUser({
       email,
       hashedPassword: await authRepo.hashPassword(plainPassword),
-      username
+      username,
     });
     const { id: userId } = await usersRepo.findUserByUsername(username);
     await userVerificationsRepo.createUserVerification({ email, userId });
+    req.flash('success', 'All good! You can sign in now.');
     res.redirect('/auth/sign-in');
   } catch (err) {
     next(err);
@@ -69,7 +77,11 @@ router.get('/auth/sign-out', ensureLoggedIn, (req, res) => {
  * [GET] Forgotten password
  */
 router.get('/auth/forgotten-password', ensureLoggedOut, (req, res) => {
-  res.render('auth/forgotten-password');
+  res.render('auth/forgotten-password', {
+    seo: {
+      title: 'IFTTT | Forgotten password',
+    },
+  });
 });
 
 /**
@@ -105,7 +117,10 @@ router.get(
       const { identifier } = req.params;
       await passwordResetsRepo.findPasswordResetByIdentifier(identifier);
       res.render('auth/reset-password', {
-        identifier
+        identifier,
+        seo: {
+          title: 'IFTTT | Reset password',
+        },
       });
     } catch (err) {
       next(err);
@@ -129,11 +144,11 @@ router.post(
       );
       await authRepo.comparePlainPasswords({
         plainPassword,
-        repeatedPlainPassword
+        repeatedPlainPassword,
       });
       await usersRepo.changePassword({
         newHashedPassword: await authRepo.hashPassword(plainPassword),
-        userId
+        userId,
       });
       await passwordResetsRepo.invalidatePasswordReset(identifier);
       req.flash('success', 'You can now sign in!');

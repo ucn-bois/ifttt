@@ -16,6 +16,14 @@ const getApplets = async (userId) =>
       db.raw(`case when userApplets.userId then 1 else 0 end as subscribed`)
     );
 
+const getAppletById = async (id) =>
+  await db('applets')
+    .where({
+      id,
+    })
+    .first();
+
 module.exports = {
+  getAppletById,
   getApplets,
 };

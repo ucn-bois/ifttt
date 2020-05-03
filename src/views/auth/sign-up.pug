@@ -1,19 +1,43 @@
 extends ../base
 
 block content
-  form(action='/auth/sign-up', method='POST')
-    input(type='hidden', name='_csrf', value=csrfToken)
-    label(for='username') Username
-    input#username(type='text', name='username', required)
-    label(for='email') Email
-    input#email(type='email', name='email', required)
-    label(for='plainPassword') Password
-    input#plainPassword(type='password', name='plainPassword', required)
-    label(for='repeatedPlainPassword') Repeat password
-    input#repeatedPlainPassword(
-      type='password',
-      name='repeatedPlainPassword',
-      required
-    )
-    button(type='submit') Sign up
-  a(href='/auth/sign-in') Go back to login
+  main.container
+    .row.ifttt-fill-height
+      .col-lg-7.d-lg-flex.flex-lg-column.justify-content-lg-center.d-none
+        h1.display-3.font-weight-bolder Connecting your apps together
+        h4.text-muted Easy automation for busy people. It's awesome. Be lazy. Sign up today and start automating.
+      .col-lg-4.offset-lg-1.d-flex.flex-column.justify-content-center
+        form.card(action='/auth/sign-up', method='POST')
+          .card-header Sign up
+          .card-body
+            input(type='hidden', name='_csrf', value=csrfToken)
+            .form-group
+              label(for='username') Username
+              input#username.form-control(
+                type='text',
+                name='username',
+                required
+              )
+            .form-group
+              label(for='email') Email
+              input#email.form-control(type='email', name='email', required)
+            .form-group
+              label(for='plainPassword') Password
+              input#plainPassword.form-control(
+                type='password',
+                name='plainPassword',
+                required
+              )
+            .form-group
+              label(for='repeatedPlainPassword') Repeat password
+              input#repeatedPlainPassword.form-control(
+                type='password',
+                name='repeatedPlainPassword',
+                required
+              )
+            button.btn.btn-block.btn-primary(type='submit') Get started
+          .card-footer
+            small.d-block Already have an account?
+              |
+              |
+              a(href='/auth/sign-in') Sign in
