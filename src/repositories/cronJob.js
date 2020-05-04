@@ -1,5 +1,6 @@
 const axios = require('axios');
 const createError = require('http-errors');
+const { nanoid } = require('nanoid');
 
 const createCronJob = async (additionalData) => {
   const response = await axios({
@@ -15,6 +16,29 @@ const createCronJob = async (additionalData) => {
     throw createError(400, message);
   }
   return data.id;
+};
+
+const createLocalCronJob = ({ timeExpression, url }) => {
+  const cronJobId = nanoid(64);
+  const { exec } = require('child_process');
+  exec(`add-cron-job ${cronJobId} "${timeExpression}" ${url}`, (err) => {
+    if (err) {
+      console.error(err);
+    }
+  });
+  return cronJobId;
+};
+
+const removeLocalCronJob = (cronJobId) => {
+  const { exec } = require('child_process');
+  exec(`remove-cron-job ${cronJobId}`, (err) => {
+    if (err) {
+      console.error(err);
+      return -1;
+    } else {
+      return cronJobId;
+    }
+  });
 };
 
 const deleteCronJobById = async (cronJobId) => {
@@ -34,5 +58,7 @@ const deleteCronJobById = async (cronJobId) => {
 
 module.exports = {
   createCronJob,
+  createLocalCronJob,
   deleteCronJobById,
+  removeLocalCronJob,
 };
