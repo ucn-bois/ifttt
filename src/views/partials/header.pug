@@ -18,6 +18,7 @@ if !user.authenticated || user.authenticated && user.verified
                 a.nav-link(href='/') Browse apps
               li.nav-item.dropdown
                 a.nav-link.dropdown-toggle(href='#', data-toggle='dropdown')
+                  span.fas.mr-2 #{user.username}
                   i.fas.fa-user-circle.fa-lg
                 .dropdown-menu
                   button.dropdown-item(
