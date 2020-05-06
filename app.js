@@ -57,7 +57,6 @@ app.use(require('./src/applets/covid19-report-discord/routes/api'));
 app.use(require('./src/applets/covid19-report-mail/routes/api'));
 app.use(require('./src/applets/dropbox-watcher/routes/api'));
 app.use(require('./src/applets/github-watcher/routes/api'));
-app.use(require('./src/applets/greeting/routes/api'));
 app.use(require('./src/applets/weather-report-gsheet/routes/api'));
 app.use(require('./src/applets/weather-report-mail/routes/api'));
 

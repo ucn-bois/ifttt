@@ -11,12 +11,16 @@ block content
             data-toggle='tab'
           ) Description
           if userApplet
+            a.list-group-item.list-group-item-action(
+              href=`/applets/greeting/execute/${userApplet.identifier}`,
+            ) Execute
             form(
               action=`/applets/greeting/unsubscribe/${userApplet.identifier}`,
               method='POST'
             )
               input(type='hidden', name='_csrf', value=csrfToken)
               button.list-group-item.list-group-item-action(type='submit') Unsubscribe
+
           else
             a.list-group-item.list-group-item-action(
               href='#greetingModal',
@@ -36,12 +40,6 @@ block content
           h5.modal-title Subscribe
         .modal-body
           input(type='hidden', name='_csrf', value=csrfToken)
-          .form-group
-            label(for='hour') Hour
-            input#hour.form-control(type='number', name='hour', max=24, min=0, required)
-          .form-group
-            label(for='minute') Minute
-            input#minute.form-control(type='number', name='minute', max=60, min=0, required)
           .form-group
             label(for='greeting') Greeting
             input#greeting.form-control(

@@ -4,7 +4,6 @@ const { nanoid } = require('nanoid');
 const { ensureLoggedIn } = require('../../../utils');
 const { APPLET_ID } = require('../utils');
 const appletsRepo = require('../../../repositories/applets');
-const cronJobRepo = require('../../../repositories/cronJob');
 const userAppletsRepo = require('../../../repositories/userApplets');
 
 router.get('/applets/greeting', ensureLoggedIn, async (req, res, next) => {
@@ -31,16 +30,11 @@ router.post(
   async (req, res, next) => {
     try {
       const { id: userId } = req.user;
-      const { greeting, hour, minute } = req.body;
+      const { greeting } = req.body;
       const identifier = nanoid(64);
-      const cronJobId = await cronJobRepo.createCronJob({
-        expression: `${minute} ${hour} * * *`,
-        httpMethod: 'POST',
-        url: `https://ifttt.merys.eu/api/applets/greeting/execute/${identifier}`,
-      });
       await userAppletsRepo.createUserApplet({
         appletId: APPLET_ID,
-        configuration: JSON.stringify({ cronJobId, greeting }),
+        configuration: JSON.stringify({ greeting }),
         identifier,
         userId,
       });
@@ -61,6 +55,24 @@ router.post(
   async (req, res, next) => {
     try {
       const { identifier } = req.params;
+      await userAppletsRepo.deleteUserAppletByIdentifier(identifier);
+      req.flash(
+        'success',
+        "You just unsubscribed from greeting applet. It's sad to see you go."
+      );
+      res.redirect('/applets/greeting');
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.get(
+  '/applets/greeting/execute/:identifier',
+  ensureLoggedIn,
+  async (req, res, next) => {
+    try {
+      const { identifier } = req.params;
       const { id: userId } = req.user;
       const {
         configuration,
@@ -68,13 +80,9 @@ router.post(
         identifier,
         userId,
       });
-      const { cronJobId } = JSON.parse(configuration);
-      await cronJobRepo.deleteCronJobById(cronJobId);
-      await userAppletsRepo.deleteUserAppletByIdentifier(identifier);
-      req.flash(
-        'success',
-        "You just unsubscribed from greeting applet. It's sad to see you go."
-      );
+      const { greeting } = JSON.parse(configuration);
+      console.log(greeting);
+      req.flash('success', 'You just said hello to our server! Thank you :)');
       res.redirect('/applets/greeting');
     } catch (err) {
       next(err);
