@@ -1,0 +1,52 @@
+extends ../../../views/base
+
+block content
+  .container.py-5
+    h1.mb-4= applet.name
+    .row
+      .mb-4.col-lg-3.mb-lg-0
+        .div.list-group
+          a.list-group-item.list-group-item-action.active(
+            href='#description',
+            data-toggle='tab'
+          ) Description
+          if userApplet
+            a.list-group-item.list-group-item-action(
+              href=`/applets/greeting/execute/${userApplet.identifier}`,
+            ) Execute
+            form(
+              action=`/applets/greeting/unsubscribe/${userApplet.identifier}`,
+              method='POST'
+            )
+              input(type='hidden', name='_csrf', value=csrfToken)
+              button.list-group-item.list-group-item-action(type='submit') Unsubscribe
+
+          else
+            a.list-group-item.list-group-item-action(
+              href='#greetingModal',
+              data-toggle='modal'
+            ) Subscribe
+      .col-lg-9
+        .card.tab-content
+          #description.card-body.tab-pane.fade.show.active= applet.description
+
+  #greetingModal.modal.fade(tabindex='-1')
+    .modal-dialog.modal-dialog-centered
+      form.modal-content(
+        action=`/applets/greeting/subscribe`,
+        method='POST'
+      )
+        .modal-header
+          h5.modal-title Subscribe
+        .modal-body
+          input(type='hidden', name='_csrf', value=csrfToken)
+          .form-group
+            label(for='greeting') Greeting
+            input#greeting.form-control(
+              type='text',
+              name='greeting',
+              required
+            )
+        .modal-footer
+          button.btn.btn-secondary(type='button', data-dismiss='modal') Close
+          button.btn.btn-primary(type='submit') Confirm
