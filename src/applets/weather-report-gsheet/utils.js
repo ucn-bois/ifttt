@@ -24,7 +24,7 @@ const inputIntoGoogleSheet = async (spreadsheetId, data) => {
   const forecast = data.data[0];
   const windInKm = Math.round(forecast.wind_spd * 3.6);
   await axios.post(
-    'https://sheets.googleapis.com/v4/spreadsheets/d/{spreadsheetId}/values/{range}:append',
+    'https://sheets.googleapis.com/v4/spreadsheets/d/${spreadsheetId}/values/${range}:append',
     {
       params: {
         majorDimension: 'ROWS',
