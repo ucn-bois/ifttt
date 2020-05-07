@@ -24,11 +24,15 @@ const inputIntoGoogleSheet = async (spreadsheetId, data) => {
   const forecast = data.data[0];
   const windInKm = Math.round(forecast.wind_spd * 3.6);
   await axios.post(
-    'https://sheets.googleapis.com/v4/spreadsheets/d/${spreadsheetId}/values/${range}:append',
+    'https://sheets.googleapis.com/v4/spreadsheets/' +
+      spreadsheetId +
+      '/values/' +
+      'Sheet1!A1:C1' +
+      ':append?valueInputOption=USER_ENTERED&key=' +
+      process.env.APPLET_GSHEET_API_KEY,
     {
       params: {
         majorDimension: 'ROWS',
-        range: 'Sheet1!A1:C1',
         values: [
           `${data.city_name}`,
           `${forecast.min_temp} + " - " + ${forecast.max_temp}`,
