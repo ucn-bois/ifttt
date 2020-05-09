@@ -31,18 +31,6 @@ router.get(
   }
 );
 
-router.post(
-  '/applets/weather-report-gsheet/authorize',
-  ensureLoggedIn,
-  async (req, res, next) => {
-    try {
-      res.redirect(`${authUrl}`);
-    } catch (err) {
-      next(err);
-    }
-  }
-);
-
 router.get(
   '/applets/weather-report-gsheet/subscribe/input',
   ensureLoggedIn,
@@ -67,22 +55,26 @@ router.get(
   }
 );
 
-router.get(
-  '/applets/weather-report-gsheet/subscribe/:code',
+router.post(
+  '/applets/weather-report-gsheet/subscribe',
   ensureLoggedIn,
   async (req, res, next) => {
     try {
-      const { code } = req.params;
-      const { access_token } = await exchangeCodeForAccessToken(code);
+      const { code } = req.query;
+      console.log(code);
+      const access_token = await exchangeCodeForAccessToken(code);
       const { id: userId } = req.user;
       const identifier = nanoid(64);
-      const { city, spreadsheetId, hour, minute } = req.body;
+      const { city, gsheetUrl, hour, minute } = req.body;
       const cronJobId = await cronJobRepo.createCronJob({
         expression: `${minute} ${hour} * * *`,
         httpMethod: 'POST',
         // https://ifttt.merys.eu/
-        url: `localhost:3000/api/applets/weather-report-gsheet/execute/${identifier}`,
+        url: `https://92b8ee20.ngrok.io/api/applets/weather-report-gsheet/execute/${identifier}`,
       });
+      const spreadsheetId = new RegExp('/spreadsheets/d/([a-zA-Z0-9-_]+)').exec(
+        gsheetUrl
+      )[1];
       await userAppletsRepo.createUserApplet({
         appletId: APPLET_ID,
         configuration: JSON.stringify({
