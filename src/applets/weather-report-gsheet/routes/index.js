@@ -1,8 +1,10 @@
 const router = require('express').Router();
 const { nanoid } = require('nanoid');
+const axios = require('axios');
 
 const { ensureLoggedIn } = require('../../../utils');
-const { APPLET_ID } = require('../utils');
+const { APPLET_ID, authUrl, exchangeCodeForAccessToken } = require('../utils');
+const appletsRepo = require('../../../repositories/applets');
 const userAppletsRepo = require('../../../repositories/userApplets');
 const cronJobRepo = require('../../../repositories/cronJob');
 
@@ -12,16 +14,17 @@ router.get(
   async (req, res, next) => {
     try {
       const { id: userId } = req.user;
-      let userApplet;
-      try {
-        userApplet = await userAppletsRepo.findUserAppletByAppletAndUserId({
-          appletId: APPLET_ID,
-          userId,
-        });
-      } catch (err) {
-        // Nothing
-      }
-      res.render('weather-report-gsheet/views/index', { userApplet });
+      const applet = await appletsRepo.getAppletById(APPLET_ID);
+      const userApplet = await userAppletsRepo.findUserAppletByAppletAndUserId({
+        appletId: APPLET_ID,
+        shouldThrow: false,
+        userId,
+      });
+      res.render('weather-report-gsheet/views/index', {
+        applet,
+        authUrl,
+        userApplet,
+      });
     } catch (err) {
       next(err);
     }
@@ -29,25 +32,61 @@ router.get(
 );
 
 router.post(
-  '/applets/weather-report-gsheet/subscribe',
+  '/applets/weather-report-gsheet/authorize',
   ensureLoggedIn,
   async (req, res, next) => {
     try {
+      res.redirect(`${authUrl}`);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.get(
+  '/applets/weather-report-gsheet/subscribe/input',
+  ensureLoggedIn,
+  async (req, res, next) => {
+    try {
+      const { code } = req.query;
+      const { id: userId } = req.user;
+      const applet = await appletsRepo.getAppletById(APPLET_ID);
+      const userApplet = await userAppletsRepo.findUserAppletByAppletAndUserId({
+        appletId: APPLET_ID,
+        shouldThrow: false,
+        userId,
+      });
+      res.render('weather-report-gsheet/views/input', {
+        applet,
+        code,
+        userApplet,
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.get(
+  '/applets/weather-report-gsheet/subscribe/:code',
+  ensureLoggedIn,
+  async (req, res, next) => {
+    try {
+      const { code } = req.params;
+      const { access_token } = await exchangeCodeForAccessToken(code);
       const { id: userId } = req.user;
       const identifier = nanoid(64);
-      const { city, gsheetUrl, hour, minute } = req.body;
+      const { city, spreadsheetId, hour, minute } = req.body;
       const cronJobId = await cronJobRepo.createCronJob({
         expression: `${minute} ${hour} * * *`,
         httpMethod: 'POST',
         // https://ifttt.merys.eu/
         url: `localhost:3000/api/applets/weather-report-gsheet/execute/${identifier}`,
       });
-      const spreadsheetId = new RegExp('/spreadsheets/d/([a-zA-Z0-9-_]+)').exec(
-        gsheetUrl
-      )[1];
       await userAppletsRepo.createUserApplet({
         appletId: APPLET_ID,
         configuration: JSON.stringify({
+          access_token,
           city,
           cronJobId,
           hour,
