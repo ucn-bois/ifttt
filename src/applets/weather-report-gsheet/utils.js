@@ -5,7 +5,7 @@ const APPLET_ID = 6;
 const fs = require('fs');
 const readline = require('readline');
 
-// npm install googleapis@39
+// npm install googleapis@39 --save
 const { google } = require('googleapis');
 
 const oAuth2Client = new google.auth.OAuth2(
