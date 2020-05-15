@@ -26,6 +26,7 @@
     "express": "~4.17.1",
     "express-session": "^1.17.1",
     "express-validator": "^6.4.1",
+    "googleapis": "^51.0.0",
     "helmet": "^3.22.0",
     "http-errors": "~1.7.3",
     "knex": "^0.21.1",
