@@ -1,16 +1,24 @@
 const router = require('express').Router();
-
 const { ensureLoggedIn, ensureVerified } = require('../utils');
 const authRepo = require('../repositories/auth');
 const usersRepo = require('../repositories/users');
 const userVerificationsRepo = require('../repositories/userVerifications');
-
+const changePasswordFormValidation = require('../forms/validators/change-password-form');
+const changeEmailFormValidation = require('../forms/validators/change-email-form');
 /**
  * [POST] Change password
  */
 router.post(
   '/user/change-password',
-  [ensureLoggedIn, ensureVerified],
+  [
+    ensureLoggedIn,
+    ensureVerified,
+    ...changePasswordFormValidation({
+      blacklist: ['password'],
+      failureRedirect: '/',
+      key: 'Change-password',
+    }),
+  ],
   async (req, res, next) => {
     try {
       const { id: userId, password: hashedPassword } = req.user;
@@ -35,6 +43,8 @@ router.post(
       req.flash(`success`, `Password successfully changed.`);
       res.redirect('/');
     } catch (err) {
+      req.flash(`success`, err.message);
+      res.redirect('/');
       next(err);
     }
   }
@@ -45,7 +55,15 @@ router.post(
  */
 router.post(
   '/user/change-email',
-  [ensureLoggedIn, ensureVerified],
+  [
+    ensureLoggedIn,
+    ensureVerified,
+    ...changeEmailFormValidation({
+      blacklist: ['thissucks@gmail.com'],
+      failureRedirect: '/',
+      key: 'Change-email',
+    }),
+  ],
   async (req, res, next) => {
     try {
       const { id: userId } = req.user;

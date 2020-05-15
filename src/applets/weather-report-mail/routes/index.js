@@ -6,6 +6,7 @@ const { APPLET_ID } = require('../utils');
 const appletsRepo = require('../../../repositories/applets');
 const userAppletsRepo = require('../../../repositories/userApplets');
 const cronJobRepo = require('../../../repositories/cronJob');
+const validationForm = require('../validationForm');
 
 router.get(
   '/applets/weather-report-mail',
@@ -28,7 +29,13 @@ router.get(
 
 router.post(
   '/applets/weather-report-mail/subscribe',
-  ensureLoggedIn,
+  [
+    ensureLoggedIn,
+    ...validationForm({
+      failureRedirect: '/applets/weather-report-mail',
+      key: 'Subscribe',
+    }),
+  ],
   async (req, res, next) => {
     try {
       const { id: userId } = req.user;
