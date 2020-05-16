@@ -6,7 +6,10 @@ block content
     .row
       .mb-4.col-lg-3.mb-lg-0
         .div.list-group
-          a.list-group-item.list-group-item-action.active(href='#description', data-toggle='tab') Description
+          a.list-group-item.list-group-item-action.active(
+            href='#description',
+            data-toggle='tab'
+          ) Description
           if userApplet
             form(
               action=`/applets/weather-report-mail/unsubscribe/${userApplet.identifier}`,
@@ -15,24 +18,42 @@ block content
               input(type='hidden', name='_csrf', value=csrfToken)
               button.list-group-item.list-group-item-action(type='submit') Unsubscribe
           else
-            a.list-group-item.list-group-item-action(href='#weatherReportMailSubscribeModal', data-toggle='modal') Subscribe
+            a.list-group-item.list-group-item-action(
+              href='#weatherReportMailSubscribeModal',
+              data-toggle='modal'
+            ) Subscribe
       .col-lg-9
         .card.tab-content
           #description.card-body.tab-pane.fade.show.active= applet.description
 
   #weatherReportMailSubscribeModal.modal.fade(tabindex='-1')
     .modal-dialog.modal-dialog-centered
-      form.modal-content(action=`/applets/weather-report-mail/subscribe`, method='POST')
+      form.modal-content(
+        action=`/applets/weather-report-mail/subscribe`,
+        method='POST'
+      )
         .modal-header
           h5.modal-title Subscribe
         .modal-body
           input(type='hidden', name='_csrf', value=csrfToken)
           .form-group
             label(for='hour') Hour
-            input#hour.form-control(type='number', name='hour', max=24, min=0, required)
+            input#hour.form-control(
+              type='number',
+              name='hour',
+              max=24,
+              min=0,
+              required
+            )
           .form-group
             label(for='minute') Minute
-            input#minute.form-control(type='number', name='minute', max=60, min=0, required)
+            input#minute.form-control(
+              type='number',
+              name='minute',
+              max=60,
+              min=0,
+              required
+            )
           .form-group
             label(for='city') City
             input#city.form-control(type='text', name='city', required)

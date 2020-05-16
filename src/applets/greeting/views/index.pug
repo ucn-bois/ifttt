@@ -12,7 +12,7 @@ block content
           ) Description
           if userApplet
             a.list-group-item.list-group-item-action(
-              href=`/applets/greeting/execute/${userApplet.identifier}`,
+              href=`/applets/greeting/execute/${userApplet.identifier}`
             ) Execute
             form(
               action=`/applets/greeting/unsubscribe/${userApplet.identifier}`,
@@ -32,21 +32,14 @@ block content
 
   #greetingModal.modal.fade(tabindex='-1')
     .modal-dialog.modal-dialog-centered
-      form.modal-content(
-        action=`/applets/greeting/subscribe`,
-        method='POST'
-      )
+      form.modal-content(action=`/applets/greeting/subscribe`, method='POST')
         .modal-header
           h5.modal-title Subscribe
         .modal-body
           input(type='hidden', name='_csrf', value=csrfToken)
           .form-group
             label(for='greeting') Greeting
-            input#greeting.form-control(
-              type='text',
-              name='greeting',
-              required
-            )
+            input#greeting.form-control(type='text', name='greeting', required)
         .modal-footer
           button.btn.btn-secondary(type='button', data-dismiss='modal') Close
           button.btn.btn-primary(type='submit') Confirm
