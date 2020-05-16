@@ -29,18 +29,6 @@ const createLocalCronJob = ({ timeExpression, url }) => {
   return cronJobId;
 };
 
-const removeLocalCronJob = (cronJobId) => {
-  const { exec } = require('child_process');
-  exec(`remove-cron-job ${cronJobId}`, (err) => {
-    if (err) {
-      console.error(err);
-      return -1;
-    } else {
-      return cronJobId;
-    }
-  });
-};
-
 const deleteCronJobById = async (cronJobId) => {
   const response = await axios({
     data: {
@@ -54,6 +42,18 @@ const deleteCronJobById = async (cronJobId) => {
   if (message) {
     throw createError(400, message);
   }
+};
+
+const removeLocalCronJob = (cronJobId) => {
+  const { exec } = require('child_process');
+  exec(`remove-cron-job ${cronJobId}`, (err) => {
+    if (err) {
+      console.error(err);
+      return -1;
+    } else {
+      return cronJobId;
+    }
+  });
 };
 
 module.exports = {
