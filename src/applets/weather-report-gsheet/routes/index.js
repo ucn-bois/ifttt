@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const { nanoid } = require('nanoid');
-const axios = require('axios');
 
 const { ensureLoggedIn } = require('../../../utils');
 const { APPLET_ID, authUrl, exchangeCodeForAccessToken } = require('../utils');
@@ -31,38 +30,11 @@ router.get(
   }
 );
 
-router.get(
-  '/applets/weather-report-gsheet/subscribe/input',
-  ensureLoggedIn,
-  async (req, res, next) => {
-    try {
-      const { code } = req.query;
-      const { id: userId } = req.user;
-      const applet = await appletsRepo.getAppletById(APPLET_ID);
-      const userApplet = await userAppletsRepo.findUserAppletByAppletAndUserId({
-        appletId: APPLET_ID,
-        shouldThrow: false,
-        userId,
-      });
-      res.render('weather-report-gsheet/views/input', {
-        applet,
-        code,
-        userApplet,
-      });
-    } catch (err) {
-      next(err);
-    }
-  }
-);
-
 router.post(
   '/applets/weather-report-gsheet/subscribe',
   ensureLoggedIn,
   async (req, res, next) => {
     try {
-      const { code } = req.query;
-      console.log(code);
-      const access_token = await exchangeCodeForAccessToken(code);
       const { id: userId } = req.user;
       const identifier = nanoid(64);
       const { city, gsheetUrl, hour, minute } = req.body;
@@ -70,7 +42,7 @@ router.post(
         expression: `${minute} ${hour} * * *`,
         httpMethod: 'POST',
         // https://ifttt.merys.eu/
-        url: `https://92b8ee20.ngrok.io/api/applets/weather-report-gsheet/execute/${identifier}`,
+        url: `https://bc8e2c19.ngrok.io/api/applets/weather-report-gsheet/execute/${identifier}`,
       });
       const spreadsheetId = new RegExp('/spreadsheets/d/([a-zA-Z0-9-_]+)').exec(
         gsheetUrl
@@ -78,7 +50,6 @@ router.post(
       await userAppletsRepo.createUserApplet({
         appletId: APPLET_ID,
         configuration: JSON.stringify({
-          access_token,
           city,
           cronJobId,
           hour,
@@ -93,6 +64,30 @@ router.post(
         'Successfully subscribed to Google Sheet weather report.'
       );
       res.redirect('/applets/weather-report-gsheet');
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.get(
+  '/applets/weather-report-gsheet/subscribe/input',
+  ensureLoggedIn,
+  async (req, res, next) => {
+    try {
+      const { code } = req.query;
+      await exchangeCodeForAccessToken(code);
+      const { id: userId } = req.user;
+      const applet = await appletsRepo.getAppletById(APPLET_ID);
+      const userApplet = await userAppletsRepo.findUserAppletByAppletAndUserId({
+        appletId: APPLET_ID,
+        shouldThrow: false,
+        userId,
+      });
+      res.render('weather-report-gsheet/views/input', {
+        applet,
+        userApplet,
+      });
     } catch (err) {
       next(err);
     }

@@ -27,12 +27,9 @@ const exchangeCodeForAccessToken = async (code) => {
   oAuth2Client.on('tokens', (tokens) => {
     if (tokens.refresh_token) {
       //TODO: store the refresh_token in my database!
-      console.log(tokens.refresh_token);
+      console.log(`refresh token: ${tokens.refresh_token}`);
     }
-    console.log(tokens.access_token);
-  });
-  oAuth2Client.setCredentials({
-    refresh_token: tokens.refresh_token,
+    console.log(`access token: ${tokens.access_token}`);
   });
 };
 
@@ -40,7 +37,7 @@ const inputIntoGSheet = async (spreadsheetId, data) => {
   const forecast = data.data[0];
   const windInKm = Math.round(forecast.wind_spd * 3.6);
 
-  let values = [windInKm, forecast.max_temp, forecast.min_temp];
+  let values = [[windInKm, forecast.max_temp, forecast.min_temp]];
 
   let resource = {
     values,
@@ -54,7 +51,7 @@ const inputIntoGSheet = async (spreadsheetId, data) => {
   await sheets.spreadsheets.values.append(
     {
       range: 'Sheet1!A1:C1',
-      resource: resource,
+      resource,
       spreadsheetId: spreadsheetId,
       valueInputOption: 'USER_ENTERED',
     },
@@ -63,7 +60,8 @@ const inputIntoGSheet = async (spreadsheetId, data) => {
         // Handle error.
         console.log(err);
       } else {
-        console.log(`${result.updates.updatedCells} cells appended.`);
+        console.log(result);
+        console.log(`${result.updatedCells} cells appended.`);
       }
     }
   );
