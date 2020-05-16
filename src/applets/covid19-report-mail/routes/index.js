@@ -40,9 +40,8 @@ router.post(
       const { id: userId } = req.user;
       const { country, hour, minute } = req.body;
       const identifier = nanoid(64);
-      const cronJobId = await cronJobRepo.createCronJob({
-        expression: `${minute} ${hour} * * *`,
-        httpMethod: 'POST',
+      const cronJobId = await cronJobRepo.createLocalCronJob({
+        timeExpression: `${minute} ${hour} * * *`,
         url: `https://ifttt.merys.eu/api/applets/covid19-report-mail/execute/${identifier}`,
       });
       await userAppletsRepo.createUserApplet({
@@ -76,7 +75,7 @@ router.post(
         userId,
       });
       const { cronJobId } = JSON.parse(configuration);
-      await cronJobRepo.deleteCronJobById(cronJobId);
+      await cronJobRepo.removeLocalCronJob(cronJobId);
       await userAppletsRepo.deleteUserAppletByIdentifier(identifier);
       req.flash(
         'success',
