@@ -2,26 +2,45 @@ extends ../../../views/base
 
 block content
   .container.py-5
-    h1.mb-4=applet.name
+    h1.mb-4= applet.name
     .row
       .modal-dialog.modal-dialog-centered
-        form.modal-content(action=`/applets/weather-report-gsheet/subscribe?code=${code}`, method='POST')
+        form.modal-content(
+          action=`/applets/weather-report-gsheet/subscribe?code=${code}`,
+          method='POST'
+        )
           .modal-header
             h5.modal-title Subscribe
           .modal-body
             input(type='hidden', name='_csrf', value=csrfToken)
             .form-group
               label(for='hour') Hour
-              input#hour.form-control(type='number', name='hour', max=24, min=0, required)
+              input#hour.form-control(
+                type='number',
+                name='hour',
+                max=24,
+                min=0,
+                required
+              )
             .form-group
               label(for='minute') Minute
-              input#minute.form-control(type='number', name='minute', max=60, min=0, required)
+              input#minute.form-control(
+                type='number',
+                name='minute',
+                max=60,
+                min=0,
+                required
+              )
             .form-group
               label(for='city') City
               input#city.form-control(type='text', name='city', required)
             .form-group
               label(for='gsheetUrl') Google Sheet URL
-              input#gsheetUrl.form-control(type='text', name='gsheetUrl', required)
+              input#gsheetUrl.form-control(
+                type='text',
+                name='gsheetUrl',
+                required
+              )
           .modal-footer
             button.btn.btn-secondary(type='button', data-dismiss='modal') Close
             button.btn.btn-primary(type='submit') Confirm

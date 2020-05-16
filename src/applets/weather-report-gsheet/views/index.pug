@@ -6,7 +6,10 @@ block content
     .row
       .mb-4.col-lg-3.mb-lg-0
         .div.list-group
-          a.list-group-item.list-group-item-action.active(href='#description', data-toggle='tab') Description
+          a.list-group-item.list-group-item-action.active(
+            href='#description',
+            data-toggle='tab'
+          ) Description
           if userApplet
             form(
               action=`/applets/weather-report-gsheet/unsubscribe/${userApplet.identifier}`,
