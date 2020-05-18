@@ -8,6 +8,7 @@
         .form-group
           label(for='newEmail') New email
           input#newEmail.form-control(type='text', name='newEmail', required)
+          +formFieldError(changeEmailForm.errors, 'newEmail')
       .modal-footer
         button.btn.btn-secondary(type='button', data-dismiss='modal') Close
         button.btn.btn-primary(type='submit') Confirm

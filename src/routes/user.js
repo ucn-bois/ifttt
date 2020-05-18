@@ -16,7 +16,7 @@ router.post(
     ...changePasswordFormValidation({
       blacklist: ['password'],
       failureRedirect: '/',
-      key: 'Change-password',
+      key: 'change-password',
     }),
   ],
   async (req, res, next) => {
@@ -61,7 +61,7 @@ router.post(
     ...changeEmailFormValidation({
       blacklist: ['thissucks@gmail.com'],
       failureRedirect: '/',
-      key: 'Change-email',
+      key: 'change-email',
     }),
   ],
   async (req, res, next) => {
