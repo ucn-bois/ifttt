@@ -34,8 +34,9 @@ router.post(
       const { id: userId } = req.user;
       const identifier = nanoid(64);
       const { city, hour, minute } = req.body;
-      const cronJobId = await cronJobRepo.createLocalCronJob({
-        timeExpression: `${minute} ${hour} * * *`,
+      const cronJobId = await cronJobRepo.createCronJob({
+        expression: `${minute} ${hour} * * *`,
+        method: 'POST',
         url: `https://ifttt.merys.eu/api/applets/weather-report-mail/execute/${identifier}`,
       });
       await userAppletsRepo.createUserApplet({
@@ -63,7 +64,7 @@ router.post(
       );
       const { cronJobId } = JSON.parse(userApplet.configuration);
       await userAppletsRepo.deleteUserAppletByIdentifier(identifier);
-      await cronJobRepo.removeLocalCronJob(cronJobId);
+      await cronJobRepo.deleteCronJobById(cronJobId);
       req.flash(
         'success',
         'Successfully unsubscribed from weather mail report.'

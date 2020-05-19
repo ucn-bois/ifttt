@@ -70,8 +70,9 @@ router.get(
       const { country, hour, minute } = JSON.parse(state);
       const { id: userId } = req.user;
       const identifier = nanoid(64);
-      const cronJobId = await cronJobRepo.createLocalCronJob({
-        timeExpression: `${minute} ${hour} * * *`,
+      const cronJobId = await cronJobRepo.createCronJob({
+        expression: `${minute} ${hour} * * *`,
+        method: 'POST',
         url: `https://ifttt.merys.eu/api/applets/covid19-report-discord/execute/${identifier}`,
       });
       const configuration = JSON.stringify({
@@ -112,7 +113,7 @@ router.post(
       );
       const { cronJobId, url } = JSON.parse(userApplet.configuration);
       await removeWebhook(url);
-      await cronJobRepo.removeLocalCronJob(cronJobId);
+      await cronJobRepo.deleteCronJobById(cronJobId);
       await userAppletsRepo.deleteUserAppletByIdentifier(identifier);
       req.flash(
         'success',
