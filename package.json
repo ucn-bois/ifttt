@@ -10,7 +10,7 @@
     "lint": "npx eslint ./src app.js",
     "lintfix": "npx eslint --fix ./src app.js",
     "start": "nodemon ./bin/www --ignore public/",
-    "test": "npx mocha"
+    "test": "npx mocha --exit"
   },
   "dependencies": {
     "@sendgrid/mail": "^7.0.1",
