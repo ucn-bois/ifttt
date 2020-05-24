@@ -1,14 +1,28 @@
 {
+  "env": {
+    "mocha": true,
+    "node": true
+  },
   "extends": [
     "eslint:recommended",
     "plugin:node/recommended",
     "plugin:prettier/recommended"
   ],
-  "plugins": [
-    "sort-destructure-keys"
-  ],
+  "plugins": ["sort-destructure-keys"],
   "rules": {
     "new-cap": "off",
+    "node/no-unpublished-require": [
+      "error",
+      {
+        "allowModules": ["chai", "chai-as-promised", "chai-http"]
+      }
+    ],
+    "no-unused-vars": [
+      "error",
+      {
+        "varsIgnorePattern": "should|expect"
+      }
+    ],
     "prettier/prettier": "error",
     "sort-destructure-keys/sort-destructure-keys": "error",
     "sort-imports": "error",
