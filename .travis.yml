@@ -2,6 +2,9 @@ language: node_js
 node_js:
   - 13.9.0
 cache: npm
+services:
+  - redis-server
+  - mysql
 
 install:
   - npm ci
