@@ -8,6 +8,8 @@ services:
 
 before_install:
   - mysql -e 'CREATE DATABASE IF NOT EXISTS test;'
+  - mysql -u travis --password="" < migrations/init.sql
+  - mysql -u travis --password="" < migrations/applets.sql
 
 install:
   - npm ci

@@ -1,1 +1,0 @@
-INSERT INTO ifttt.applets (name, description, homepage) VALUES ('Greeting', 'Say hello to our server.', '/applets/greeting');

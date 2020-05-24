@@ -1,0 +1,7 @@
+INSERT INTO applets (name, description, homepage) VALUES ('COVID19 Mail Report', 'Get the latest statistics of COVID19 in country of your choice ', '/applets/covid19-report-mail');
+INSERT INTO applets (name, description, homepage) VALUES ('Dropbox Watcher', 'Get email whenever there is update on your own Dropbox space', '/applets/dropbox-watcher');
+INSERT INTO applets (name, description, homepage) VALUES ('GitHub Watcher', 'Get an email whenever there is a commit pushed to a remote repository of you choice', '/applets/github-watcher');
+INSERT INTO applets (name, description, homepage) VALUES ('COVID19 Discord Report', 'Get the latest statistics of COVID19 in country of your choice ', '/applets/covid19-report-discord');
+INSERT INTO applets (name, description, homepage) VALUES ('Weather Mail Report', 'Get the current weather delivered to your inbox every day', '/applets/weather-report-mail');
+INSERT INTO applets (name, description, homepage) VALUES ('Weather Google Sheet Report', 'Get the current weather into your Google Sheet page!', '/applets/weather-report-gsheet');
+INSERT INTO applets (name, description, homepage) VALUES ('Greeting', 'Say hello to our server.', '/applets/greeting');

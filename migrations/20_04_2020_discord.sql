@@ -1,1 +1,0 @@
-INSERT INTO ifttt.applets (id, name, description, homepage) VALUES (4, 'COVID19 Discord Report', 'Get the latest statistics of COVID19 in country of your choice ', '/applets/covid19-report-discord');
