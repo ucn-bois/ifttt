@@ -38,7 +38,6 @@ CREATE TABLE `applets` (
 
 LOCK TABLES `applets` WRITE;
 /*!40000 ALTER TABLE `applets` DISABLE KEYS */;
-INSERT INTO `applets` VALUES (1,'COVID19 Mail Report','Get the latest statistics of COVID19 in country of your choice ','/applets/covid19-report-mail'),(2,'Dropbox Watcher','Get email whenever there is update on your own Dropbox space','/applets/dropbox-watcher'),(3,'GitHub Watcher','Get an email whenever there is a commit pushed to a remote repository of you choice','/applets/github-watcher');
 /*!40000 ALTER TABLE `applets` ENABLE KEYS */;
 UNLOCK TABLES;
 
