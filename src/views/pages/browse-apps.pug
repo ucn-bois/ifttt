@@ -6,3 +6,14 @@ block content
       each applet in applets
         .col-sm-6.col-md-4.col-lg-3.mb-4
           +applet(applet)
+  if user.verified
+    include ../forms/change-email
+    include ../forms/change-password
+
+block scripts
+  if modal === 'email'
+    script.
+      $('#changeEmailModal').modal('show');
+  else if modal === 'password'
+    script.
+      $('#changePasswordModal').modal('show');
