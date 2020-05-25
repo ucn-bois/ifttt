@@ -22,10 +22,11 @@ const changePassword = async ({ newHashedPassword, userId }) => {
     });
 };
 
-const createUser = async ({ email, hashedPassword, username }) =>
+const createUser = async ({ email, hashedPassword, timezone, username }) =>
   await db('users').insert({
     email,
     password: hashedPassword,
+    timezone,
     username,
   });
 

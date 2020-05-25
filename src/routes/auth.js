@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const passport = require('passport');
+const moment = require('moment-timezone');
 
 const { popForm } = require('../forms');
 const forgottenPasswordFormValidation = require('../forms/validators/forgotten-password-form');
@@ -69,6 +70,7 @@ router.post(
       await usersRepo.createUser({
         email,
         hashedPassword: await authRepo.hashPassword(plainPassword),
+        timezone: moment.tz.guess(),
         username,
       });
       const { id: userId } = await usersRepo.findUserByUsername({ username });
