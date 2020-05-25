@@ -15,7 +15,7 @@ router.post(
     ensureVerified,
     ...changePasswordFormValidation({
       blacklist: ['password'],
-      failureRedirect: '/',
+      failureRedirect: '/?modal=password',
       key: 'change-password',
     }),
   ],
@@ -43,8 +43,6 @@ router.post(
       req.flash(`success`, `Password successfully changed.`);
       res.redirect('/');
     } catch (err) {
-      req.flash(`success`, err.message);
-      res.redirect('/');
       next(err);
     }
   }
@@ -59,8 +57,7 @@ router.post(
     ensureLoggedIn,
     ensureVerified,
     ...changeEmailFormValidation({
-      blacklist: ['thissucks@gmail.com'],
-      failureRedirect: '/',
+      failureRedirect: '/?modal=email',
       key: 'change-email',
     }),
   ],

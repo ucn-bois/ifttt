@@ -7,7 +7,9 @@ module.exports = ({
   key,
   persistOnFailure = true,
 }) => [
-  body('hour').matches('(^[1-2][0-3]$)|^[0-9]$').withMessage('Hours have to be from 0 to 23'),
+  body('hour')
+    .matches('(^[1-2][0-3]$)|^[0-9]$')
+    .withMessage('Hours have to be from 0 to 23'),
   body('minute')
     .matches('^([0-5][0-9])$|^[0-9]$')
     .withMessage('Minutes have to be from 0 to 59'),

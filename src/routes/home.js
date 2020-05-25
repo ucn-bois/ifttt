@@ -10,9 +10,9 @@ router.get('/', [ensureLoggedIn, ensureVerified], async (req, res, next) => {
     const applets = await appletsRepo.getApplets(userId);
     res.render('pages/browse-apps', {
       applets: applets,
-      changePasswordForm: popForm({ key: 'change-password', req }),
-      // eslint-disable-next-line sort-keys
       changeEmailForm: popForm({ key: 'change-email', req }),
+      changePasswordForm: popForm({ key: 'change-password', req }),
+      modal: req.query.modal,
       seo: {
         title: 'IFTTT | Browse apps',
       },

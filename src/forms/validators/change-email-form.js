@@ -10,7 +10,7 @@ module.exports = ({
 }) => [
   body('newEmail')
     .isEmail()
-    .withMessage('Please put in a valid Email Address')
+    .withMessage('Use valid email address.')
     .custom(async (email) => {
       const user = await usersRepo.findUserByEmail({
         email,
