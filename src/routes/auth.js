@@ -70,7 +70,7 @@ router.post(
       await usersRepo.createUser({
         email,
         hashedPassword: await authRepo.hashPassword(plainPassword),
-        timezone: moment.tz.guess(),
+        timezone: moment.tz.guess(true),
         username,
       });
       const { id: userId } = await usersRepo.findUserByUsername({ username });
