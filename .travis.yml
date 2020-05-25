@@ -5,6 +5,9 @@ cache: npm
 services:
   - redis-server
   - mysql
+branches:
+  only:
+    - master
 
 before_install:
   - mysql -e 'CREATE DATABASE IF NOT EXISTS test;'
