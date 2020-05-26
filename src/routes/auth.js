@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const passport = require('passport');
-const moment = require('moment-timezone');
 
 const { popForm } = require('../forms');
 const forgottenPasswordFormValidation = require('../forms/validators/forgotten-password-form');
@@ -70,7 +69,8 @@ router.post(
       await usersRepo.createUser({
         email,
         hashedPassword: await authRepo.hashPassword(plainPassword),
-        timezone: moment.tz.guess(true),
+        // timezone: moment.tz.guess(true), this doesn't work - server-side timezone every time
+        timezone: 'Europe/London', // setting UTC as default
         username,
       });
       const { id: userId } = await usersRepo.findUserByUsername({ username });
