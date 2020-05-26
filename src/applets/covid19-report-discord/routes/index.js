@@ -2,7 +2,6 @@ const router = require('express').Router();
 const { nanoid } = require('nanoid');
 
 const validationForm = require('../validationForm');
-const { convertTimeToUTC } = require('../../shared/timezone-converter');
 const { ensureLoggedIn } = require('../../../utils');
 const { countries } = require('../../shared/covid19-report/utils');
 const {
@@ -77,14 +76,11 @@ router.get(
       const { state } = req.query;
       const { country, hour, minute } = JSON.parse(state);
       const { id: userId, timezone } = req.user;
-      const {
-        hours: convertedHours,
-        minutes: convertedMinutes,
-      } = convertTimeToUTC({ hour, minute, timezone });
       const identifier = nanoid(64);
       const cronJobId = await cronJobRepo.createCronJob({
-        expression: `${convertedMinutes} ${convertedHours} * * *`,
-        method: 'POST',
+        expression: `${minute} ${hour} * * *`,
+        httpMethod: 'POST',
+        timezone,
         url: `https://ifttt.merys.eu/api/applets/covid19-report-discord/execute/${identifier}`,
       });
       const configuration = JSON.stringify({
