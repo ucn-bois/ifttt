@@ -9,6 +9,7 @@ block content
   if user.verified
     include ../forms/change-email
     include ../forms/change-password
+    include ../forms/change-timezone
 
 block scripts
   if modal === 'email'
@@ -16,4 +17,7 @@ block scripts
       $('#changeEmailModal').modal('show');
   else if modal === 'password'
     script.
-      $('#changePasswordModal').modal('show');
+      $('#changeEmailPassword').modal('show');
+  else if modal === 'timezone'
+    script.
+      $('#changeTimezoneModal').modal('show');

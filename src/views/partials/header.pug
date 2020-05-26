@@ -23,6 +23,11 @@ if !user.authenticated || user.authenticated && user.verified
                   button.dropdown-item(
                     type='button',
                     data-toggle='modal',
+                    data-target='#changeTimezoneModal'
+                  ) Change timezone
+                  button.dropdown-item(
+                    type='button',
+                    data-toggle='modal',
                     data-target='#changePasswordModal'
                   ) Change password
                   button.dropdown-item(

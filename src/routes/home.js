@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const moment = require('moment-timezone');
 
 const { ensureLoggedIn, ensureVerified } = require('../utils');
 const appletsRepo = require('../repositories/applets');
@@ -16,6 +17,7 @@ router.get('/', [ensureLoggedIn, ensureVerified], async (req, res, next) => {
       seo: {
         title: 'IFTTT | Browse apps',
       },
+      timezones: moment.tz.names(),
     });
   } catch (err) {
     next(err);
