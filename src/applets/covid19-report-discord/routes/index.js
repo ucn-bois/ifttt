@@ -4,8 +4,11 @@ const { nanoid } = require('nanoid');
 <<<<<<< HEAD
 =======
 const validationForm = require('../validationForm');
+<<<<<<< HEAD
 const { convertTimeToUTC } = require('../../shared/timezone-converter');
 >>>>>>> added timezone converter to discord covid applet
+=======
+>>>>>>> added timezones to scheduled applets
 const { ensureLoggedIn } = require('../../../utils');
 const { countries } = require('../../shared/covid19-report/utils');
 const {
@@ -74,12 +77,9 @@ router.get(
       const { state } = req.query;
       const { country, hour, minute } = JSON.parse(state);
       const { id: userId, timezone } = req.user;
-      const {
-        hours: convertedHours,
-        minutes: convertedMinutes,
-      } = convertTimeToUTC({ hour, minute, timezone });
       const identifier = nanoid(64);
       const cronJobId = await cronJobRepo.createCronJob({
+<<<<<<< HEAD
 <<<<<<< HEAD
         expression: `${minute} ${hour} * * *`,
         httpMethod: 'POST',
@@ -87,6 +87,11 @@ router.get(
         expression: `${convertedMinutes} ${convertedHours} * * *`,
         method: 'POST',
 >>>>>>> added timezone converter to discord covid applet
+=======
+        expression: `${minute} ${hour} * * *`,
+        httpMethod: 'POST',
+        timezone,
+>>>>>>> added timezones to scheduled applets
         url: `https://ifttt.merys.eu/api/applets/covid19-report-discord/execute/${identifier}`,
       });
       const configuration = JSON.stringify({

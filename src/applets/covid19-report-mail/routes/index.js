@@ -37,12 +37,16 @@ router.post(
   ensureLoggedIn,
   async (req, res, next) => {
     try {
-      const { id: userId } = req.user;
+      const { id: userId, timezone } = req.user;
       const { country, hour, minute } = req.body;
       const identifier = nanoid(64);
       const cronJobId = await cronJobRepo.createCronJob({
         expression: `${minute} ${hour} * * *`,
         httpMethod: 'POST',
+<<<<<<< HEAD
+=======
+        timezone,
+>>>>>>> added timezones to scheduled applets
         url: `https://ifttt.merys.eu/api/applets/covid19-report-mail/execute/${identifier}`,
       });
       await userAppletsRepo.createUserApplet({
