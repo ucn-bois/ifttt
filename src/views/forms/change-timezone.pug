@@ -6,7 +6,7 @@
       .modal-body
         input(type='hidden', name='_csrf', value=csrfToken)
         .form-group
-          label(for='timezone') Timezone #{userTimezone}
+          label(for='timezone') Timezone
           select#timezone.form-control(name='timezone')
             each timezone in timezones
               if (timezone === userTimezone)
