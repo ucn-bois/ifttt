@@ -43,7 +43,7 @@ router.post(
       const { city, hour, minute } = req.body;
       const cronJobId = await cronJobRepo.createCronJob({
         expression: `${minute} ${hour} * * *`,
-        method: 'POST',
+        httpMethod: 'POST',
         url: `https://ifttt.merys.eu/api/applets/weather-report-mail/execute/${identifier}`,
       });
       await userAppletsRepo.createUserApplet({

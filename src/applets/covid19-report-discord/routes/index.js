@@ -79,7 +79,7 @@ router.get(
       const identifier = nanoid(64);
       const cronJobId = await cronJobRepo.createCronJob({
         expression: `${minute} ${hour} * * *`,
-        method: 'POST',
+        httpMethod: 'POST',
         url: `https://ifttt.merys.eu/api/applets/covid19-report-discord/execute/${identifier}`,
       });
       const configuration = JSON.stringify({

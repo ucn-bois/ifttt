@@ -39,7 +39,6 @@ router.post(
       const cronJobId = await cronJobRepo.createCronJob({
         expression: `${minute} ${hour} * * *`,
         httpMethod: 'POST',
-        // https://ifttt.merys.eu/
         url: `localhost:3000/api/applets/weather-report-gsheet/execute/${identifier}`,
       });
       const spreadsheetId = new RegExp('/spreadsheets/d/([a-zA-Z0-9-_]+)').exec(

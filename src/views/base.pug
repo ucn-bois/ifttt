@@ -41,10 +41,20 @@ html(lang='en')
     block content
     include ./partials/clouds
     include ./partials/flashes
+    if user.verified
+      include forms/change-email
+      include forms/change-password
     script(src='https://kit.fontawesome.com/f3ae0f0ec8.js')
     script(src='https://unpkg.com/jquery@3.4.1/dist/jquery.min.js')
     script(
       src='https://unpkg.com/bootstrap@4.4.1/dist/js/bootstrap.bundle.min.js'
     )
     script(src='/javascripts/index.min.js')
+    if modal === 'email'
+      script.
+        $('#changeEmailModal').modal('show');
+    else if modal === 'password'
+      script.
+        $('#changePasswordModal').modal('show');
     block scripts
+    

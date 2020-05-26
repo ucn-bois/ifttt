@@ -5,6 +5,7 @@ const usersRepo = require('../repositories/users');
 const userVerificationsRepo = require('../repositories/userVerifications');
 const changePasswordFormValidation = require('../forms/validators/change-password-form');
 const changeEmailFormValidation = require('../forms/validators/change-email-form');
+
 /**
  * [POST] Change password
  */

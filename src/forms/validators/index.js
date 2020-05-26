@@ -37,7 +37,7 @@ const processValidationResults = ({
     return res.redirect(
       failureRedirect
         ? typeof failureRedirect === 'function'
-          ? failureRedirect({ params: req.params, query: req.query })
+          ? failureRedirect({ params: req.params, query: req.query, req })
           : failureRedirect
         : req.originalUrl
     );
