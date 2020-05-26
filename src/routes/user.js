@@ -63,7 +63,7 @@ router.post(
         timezone,
         userId,
       });
-      req.flash(`success`, `Password successfully changed.`);
+      req.flash(`success`, `Timezone successfully changed.`);
       res.redirect('/');
     } catch (err) {
       next(err);
