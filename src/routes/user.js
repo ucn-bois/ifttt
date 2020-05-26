@@ -49,6 +49,28 @@ router.post(
 );
 
 /**
+ * [POST] Change timezone
+ */
+router.post(
+  '/user/change-timezone',
+  [ensureLoggedIn, ensureVerified],
+  async (req, res, next) => {
+    try {
+      const { id: userId } = req.user;
+      const { timezone } = req.body;
+      await usersRepo.changeTimezone({
+        timezone,
+        userId,
+      });
+      req.flash(`success`, `Password successfully changed.`);
+      res.redirect('/');
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+/**
  * [POST] Change email
  */
 router.post(

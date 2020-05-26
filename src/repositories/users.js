@@ -22,6 +22,16 @@ const changePassword = async ({ newHashedPassword, userId }) => {
     });
 };
 
+const changeTimezone = async ({ timezone, userId }) => {
+  await db('users')
+    .where({
+      id: userId,
+    })
+    .update({
+      timezone,
+    });
+};
+
 const createUser = async ({ email, hashedPassword, timezone, username }) =>
   await db('users').insert({
     email,
@@ -63,6 +73,7 @@ const unverifyUser = async (userId) =>
 module.exports = {
   changeEmail,
   changePassword,
+  changeTimezone,
   createUser,
   findUserByEmail,
   findUserById,
