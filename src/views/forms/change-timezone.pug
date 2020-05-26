@@ -1,0 +1,15 @@
+#changeTimezoneModal.modal.fade(tabindex='-1')
+  .modal-dialog.modal-dialog-centered
+    form.modal-content(action=`/user/change-email`, method='POST')
+      .modal-header
+        h5.modal-title Change timezone
+      .modal-body
+        input(type='hidden', name='_csrf', value=csrfToken)
+        .form-group
+          label(for='timezone') Timezone
+          select#timezone.form-control(name='timezone')
+            each timezone in timezones
+              option(value=timezone) #{timezone}
+      .modal-footer
+        button.btn.btn-secondary(type='button', data-dismiss='modal') Close
+        button.btn.btn-primary(type='submit') Confirm
