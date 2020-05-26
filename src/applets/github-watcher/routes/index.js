@@ -12,7 +12,6 @@ const {
 } = require('../utils');
 const appletsRepo = require('../../../repositories/applets');
 const userAppletsRepo = require('../../../repositories/userApplets');
-const validationForm = require('../validationForm');
 
 router.get(
   '/applets/github-watcher',
@@ -38,13 +37,7 @@ router.get(
 
 router.post(
   '/applets/github-watcher/authorize',
-  [
-    ensureLoggedIn,
-    ...validationForm({
-      failureRedirect: '/applets/github-watcher',
-      key: 'Subscribe',
-    }),
-  ],
+  ensureLoggedIn,
   async (req, res, next) => {
     try {
       const { repository } = req.body;

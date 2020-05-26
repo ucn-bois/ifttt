@@ -1,7 +1,6 @@
 const router = require('express').Router();
 const { nanoid } = require('nanoid');
 
-const validationForm = require('../validationForm');
 const { ensureLoggedIn } = require('../../../utils');
 const { countries } = require('../../shared/covid19-report/utils');
 const cronJobRepo = require('../../../repositories/cronJob');
@@ -35,13 +34,7 @@ router.get(
 
 router.post(
   '/applets/covid19-report-mail/subscribe',
-  [
-    ensureLoggedIn,
-    ...validationForm({
-      failureRedirect: '/applets/covid19-report-mail',
-      key: 'Subscribe',
-    }),
-  ],
+  ensureLoggedIn,
   async (req, res, next) => {
     try {
       const { id: userId } = req.user;
@@ -83,7 +76,7 @@ router.post(
         userId,
       });
       const { cronJobId } = JSON.parse(configuration);
-      await cronJobRepo.removeLocalCronJob(cronJobId);
+      await cronJobRepo.deleteCronJobById(cronJobId);
       await userAppletsRepo.deleteUserAppletByIdentifier(identifier);
       req.flash(
         'success',

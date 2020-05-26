@@ -1,7 +1,6 @@
 const router = require('express').Router();
 const { nanoid } = require('nanoid');
 
-const validationForm = require('../validationForm');
 const { ensureLoggedIn } = require('../../../utils');
 const { countries } = require('../../shared/covid19-report/utils');
 const {
@@ -39,13 +38,7 @@ router.get(
 
 router.post(
   '/applets/covid19-report-discord/authorize',
-  [
-    ensureLoggedIn,
-    ...validationForm({
-      failureRedirect: '/applets/covid19-report-discord',
-      key: 'Subscribe',
-    }),
-  ],
+  ensureLoggedIn,
   async (req, res, next) => {
     try {
       const { country, hour, minute } = req.body;

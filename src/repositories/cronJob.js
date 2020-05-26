@@ -8,7 +8,7 @@ const createCronJob = async (additionalData) => {
       ...additionalData,
       token: process.env.SETCRONJOB_API_KEY,
     },
-    httpMethod: 'POST',
+    method: 'POST',
     url: 'https://www.setcronjob.com/api/cron.add',
   });
   const { data, message } = response.data;
