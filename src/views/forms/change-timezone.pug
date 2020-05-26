@@ -6,10 +6,13 @@
       .modal-body
         input(type='hidden', name='_csrf', value=csrfToken)
         .form-group
-          label(for='timezone') Timezone
+          label(for='timezone') Timezone #{userTimezone}
           select#timezone.form-control(name='timezone')
             each timezone in timezones
-              option(value=timezone) #{timezone}
+              if (timezone === userTimezone)
+                option(value=timezone, selected) #{timezone}
+              else
+                option(value=timezone) #{timezone}
       .modal-footer
         button.btn.btn-secondary(type='button', data-dismiss='modal') Close
         button.btn.btn-primary(type='submit') Confirm

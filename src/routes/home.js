@@ -6,7 +6,7 @@ const appletsRepo = require('../repositories/applets');
 
 router.get('/', [ensureLoggedIn, ensureVerified], async (req, res, next) => {
   try {
-    const { id: userId } = req.user;
+    const { id: userId, timezone } = req.user;
     const applets = await appletsRepo.getApplets(userId);
     res.render('pages/browse-apps', {
       applets: applets,
@@ -15,6 +15,7 @@ router.get('/', [ensureLoggedIn, ensureVerified], async (req, res, next) => {
         title: 'IFTTT | Browse apps',
       },
       timezones: moment.tz.names(),
+      userTimezone: timezone,
     });
   } catch (err) {
     next(err);
