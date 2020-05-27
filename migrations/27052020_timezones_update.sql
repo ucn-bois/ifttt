@@ -1,1 +1,0 @@
-alter table users modify timezone nvarchar(255) default 'Europe/London' null;

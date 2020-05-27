@@ -14,7 +14,6 @@ before_install:
   - mysql test < migrations/init.sql
   - mysql test < migrations/applets.sql
   - mysql test < migrations/25052020_timezones.sql
-  - mysql test < migrations/27052020_timezones_update.sql
 
 install:
   - npm ci

@@ -1,2 +1,2 @@
 alter table users
-    add timezone text default 'Europe/London' null;
+    add timezone varchar(255) default 'Europe/London' null;
