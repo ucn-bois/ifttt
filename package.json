@@ -31,7 +31,7 @@
     "http-errors": "~1.7.3",
     "knex": "^0.21.1",
     "mariadb": "^2.3.1",
-    "moment-timezone": "^0.5.28",
+    "moment-timezone": "^0.5.35",
     "morgan": "~1.10.0",
     "mysql": "^2.18.1",
     "nanoid": "^3.1.3",
